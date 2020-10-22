@@ -1,0 +1,42 @@
+form(action="/sessions/add", method="post")
+    .form-group
+        .row
+            .col-md-6
+                label Saison
+                select.form-control(name='seasonId')
+                    option Sélectionnez une saison
+                    each season in seasons
+                        option(value='#{season.seasonId}') #{season.name}
+    .form-group
+        .row
+            .col-md-6
+                label(for='date') Date
+                input#date.form-control(type='date', name="date")
+    .form-group#session-form-app(v-cloak)
+        label Joueurs
+        .row
+            .col-md-6
+                div.list-group
+                    div.list-group-item.list-group-item-secondary
+                        label(for='player-search') Recherchez un joueur
+                        input#player-search.form-control.form-control-sm(name='player-search', type='text', placeholder='Tapez-ici le nom du joueur', v-model='playerSearch', ref="searchInput", autocomplete='off')
+                    div.all-players-list
+                        button.list-group-item.list-group-item-action(type='button', v-for='player in filteredPlayers', :key='player.playerId', v-on:click='selectPlayer(player)') {{player.firstName}}
+                        div.list-group-item.font-weight-lighter.font-italic(v-if='filteredPlayers.length === 0') Aucun joueur
+            .col-md-6
+                div.list-group
+                    div.list-group-item.list-group-item-success Joueurs sélectionnés
+                    button.list-group-item.list-group-item-action.font-weight-bold(type='button', v-for='player in selectedPlayers', :key='player.playerId', v-on:click='unselectPlayer(player)') {{player.firstName}}
+                        input(type='hidden', name='playerIds', v-bind:value='player.playerId')
+                    div.list-group-item.font-weight-lighter.font-italic(v-if='selectedPlayers.length === 0') Aucun joueur
+    .form-group
+        .row
+            .col-md-6
+                label Lieu
+                select.form-control(name='placeId')
+                    option Sélectionnez un lieu
+                    each place in places
+                        option(value='#{place.placeId}') #{place.name}
+
+    input#csrf.form-control(type='hidden', name='#{_csrf.parameterName}', value='#{_csrf.token}')
+    button.btn.btn-primary(type='submit') Enregistrer

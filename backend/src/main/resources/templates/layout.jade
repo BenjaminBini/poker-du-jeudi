@@ -1,0 +1,55 @@
+doctype html
+html
+    head
+        // Required meta tags
+        meta(charset='utf-8')
+        meta(content='width=device-width, initial-scale=1, shrink-to-fit=no' name='viewport')
+        // Bootstrap CSS
+        link(href='/bootstrap.min.css', rel='stylesheet')
+        link(href='/style.css?v=1', rel='stylesheet')
+        link(href='/pivot.css', rel='stylesheet')
+        link(href='/material-icons.css', rel='stylesheet')
+        title Poker du Jeudi
+    body
+        nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.mb-4
+            .container
+                a.navbar-brand(href='/')
+                    img(src='/apple-touch-icon.png', style='width: 45px; margin-right: 15px')
+                    | Poker du Jeudi
+                button.navbar-toggler(aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation' data-target='#navbarSupportedContent' data-toggle='collapse' type='button')
+                    span.navbar-toggler-icon
+                #navbarSupportedContent.collapse.navbar-collapse
+                    ul.navbar-nav.mr-auto
+                        mixin menuItem(title, url, name)
+                            li.nav-item(class=name == active ? 'active' : '')
+                                a.nav-link(href=url) #{title}
+                        +menuItem('Accueil', '/', 'home')
+                        +menuItem('Joueurs', '/players', 'players')
+                        +menuItem('Sessions', '/sessions', 'sessions')
+                        +menuItem('Stats', '/stats', 'stats')
+                    div.navbar-nav
+                        if isLoggedIn
+                            a.nav-link(href="/logout") Déconnexion
+                        else
+                            a.nav-link(href="/login") Connexion
+        block content
+
+        .container
+            hr
+        footer.container
+            p &copy; 2020 Benjamin Bini
+        // Optional JavaScript
+        // jQuery first, then Popper.js, then Bootstrap JS
+        script(src='/jquery-3.4.1.min.js')
+        script(src='/popper.min.js')
+        script(src='/bootstrap.min.js')
+        script(src='/papaparse.js')
+        script(src='/jqueryui.js')
+        script(src='/pivot.js')
+        script(src='/pivot.fr.js')
+        script(src='/plotly.js')
+        script(src='/plotly_renderers.js')
+
+        script(src='/axios.min.js')
+        script(src='/vue.min.js')
+        script(src='/script.js?v=1')
