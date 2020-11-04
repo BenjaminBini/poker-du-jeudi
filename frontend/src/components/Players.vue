@@ -1,10 +1,10 @@
 <template lang="pug">
-  b-container
+  b-container(v-if="players.length > 0")
     b-row
       b-col.mb-4
         h1 {{players.length}} joueur{{players.length > 1 ? 's' : ''}}
     b-table(:items="players", :fields="playersFields",
-      sort-by="sessionCount", sort-desc="true", striped)
+      sort-by="sessionCount", sort-desc=true, striped)
       template(#cell(name)="player")
         router-link(:to="'/players/' + player.item.playerId") {{player.item.firstName}}
 </template>

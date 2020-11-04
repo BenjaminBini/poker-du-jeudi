@@ -1,5 +1,6 @@
 package io.bini.poker.pokerdujeudi.service.result;
 
+import io.bini.poker.pokerdujeudi.dto.SimpleResultDTO;
 import io.bini.poker.pokerdujeudi.dto.StatDTO;
 import io.bini.poker.pokerdujeudi.model.Player;
 import io.bini.poker.pokerdujeudi.model.PlayerResult;
@@ -47,4 +48,7 @@ public class PlayerResultService {
         return this.playerResultRepository.getSessionStats(sessionId);
     }
     public List<StatDTO> getSeasonStatsUntilDate(Integer sessionId) { return this.playerResultRepository.getSeasonStatsUntilDate(sessionId); }
+    public List<SimpleResultDTO> getCumulatedResultsUntilSession(Integer sessionId, Long seasonId) {
+        return this.playerResultRepository.getCumulatedResultsUntilSession(sessionId, seasonId);
+    }
 }

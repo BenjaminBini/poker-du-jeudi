@@ -1,5 +1,5 @@
 <template lang="pug">
-  b-container
+  b-container(v-if="session && ranking")
     b-row
       b-col
         .section-title.mb-4
@@ -9,24 +9,32 @@
         .card
           .card-header
             h4.text-center Résultats de la session
-          .card-body Test
+          .card-body
+              session-result(:results="session.playerResults", type="result")
         .card.mt-3
           .card-header
             h4.text-center Nombre de buy-ins
-          .card-body Test
+          .card-body
+            session-result(:results="session.playerResults", type="buyIns", style="max-height: 300px; position: relative;")
       b-col.mb-3(col md="6")
         .card
           .card-header
             h4.text-center Classement général (après la session)
-          .card-body Test
+          .card-body
+            ranking-chart(:ranking="ranking")
         .card.mt-3
           .card-header
             h4.text-center Informations
-          .card-body Test
+          .card-body
+            ul
+              li Chez {{session.place.name}}
+              li {{session.playerResults.length}} joueurs
+              li {{- session.playerResults.reduce((acc, curr) => acc + curr.result, 0)}} € de monnaie
 </template>
 
 <script>
 import SessionService from '../services/session-service';
+import RankingService from '../services/ranking-service';
 import {format} from 'date-fns';
 import { fr } from 'date-fns/locale'
 
@@ -36,12 +44,17 @@ export default {
     return {
       session: null,
       sessionDate: null,
+      ranking: null,
     }
   },
   mounted() {
-    SessionService.getSession(this.$route.params.id).then(response => {
+    let sessionId = this.$route.params.id;
+    SessionService.getSession(sessionId).then(response => {
       this.session = response.data;
       this.sessionDate = format(new Date(this.session.date), 'EEEE d MMMM yyyy', {locale: fr});
+    });
+    RankingService.getUntil(sessionId).then(response => {
+      this.ranking = response.data;
     });
   }
 }

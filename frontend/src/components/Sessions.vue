@@ -1,10 +1,10 @@
 <template lang="pug">
-  b-container
+  b-container(v-if="items.length > 0")
     b-row
       b-col.mb-4
         h1 {{items.length}} session{{items.length > 1 ? 's' : ''}}
     b-table(:items="items", :fields="fields", striped, stacked='md'
-      sort-by="date", sort-desc="false")
+      sort-by="date", sort-desc=true)
       template(#cell(date)="session")
         router-link(:to="'/sessions/' + session.item.sessionId")
           | {{format(new Date(session.item.date), 'EEEE d MMMM yyyy', {locale: locale})}}
