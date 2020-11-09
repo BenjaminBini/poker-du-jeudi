@@ -1,16 +1,20 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Poker du jeudi"/>
+    <main-template :routes="routes" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import MainTemplate from './components/MainTemplate.vue'
+import routes from "./router/routes";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    MainTemplate
+  },
+  data: () => ({
+      routes
+  }),
 }
 </script>

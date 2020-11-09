@@ -1,0 +1,56 @@
+<template lang="pug">
+  tw-table(:items="sessions", :cols="cols")
+</template>
+
+<script>
+import SessionService from "../services/session-service";
+import {format} from 'date-fns';
+import { fr } from 'date-fns/locale'
+import TailwindTable from "./table/Table";
+
+export default {
+  name: "poker-sessions",
+  components: {TailwindTable},
+  data: () => ({
+    sessions: [],
+    cols: [{
+      field: 'date',
+      label: 'Session',
+      formatter: function(value) {
+        return format(new Date(value), 'EEEE d MMMM yyyy', {locale: fr});
+      }
+    }, {
+      field: 'playerResults.length',
+      label: 'Joueurs',
+    }, {
+      field: 'place.name',
+      label: 'Lieu',
+    }, {
+      fieldCompute: function(item) {
+        return item.winner.player.firstName + " (" + item.winner.result + " €)";
+      },
+      label: 'Vainqueur',
+    }, {
+      fieldCompute: function(item) {
+        return item.loser.player.firstName + " (" + item.loser.result + " €)";
+      },
+      label: 'Perdant',
+    }]
+  }),
+  mounted() {
+    SessionService.getSessions().then(response => {
+      this.sessions = response.data;
+      this.sessions.forEach(s => {
+        s.winner = s.playerResults.reduce((acc, curr) => curr.result > acc.result ? curr : acc, {result: -1});
+        s.loser = s.playerResults.reduce((acc, curr) => curr.result < acc.result ? curr : acc, {result: Number.MAX_VALUE});
+      });
+      this.$store.commit('setPageTitle', this.sessions.length + ' sessions');
+      //this.sessions.sort((s1, s2) => s2.compareTo(s2));
+    });
+  },
+}
+</script>
+
+<style scoped>
+
+</style>
