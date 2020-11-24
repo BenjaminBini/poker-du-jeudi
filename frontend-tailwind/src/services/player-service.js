@@ -14,11 +14,10 @@ export default {
         return 0;
     },
     getCurrentSeasonResult(player) {
+        const currentYear = new Date().getFullYear();
         if (player && player.playerResults) {
-            const currentSeason = player.playerResults.map(pr => pr.session.season.year)
-                .reduce((acc, curr) => acc > curr ? acc : curr);
-            return player.playerResults.filter(pr => pr.session.season.year === currentSeason)
-                .map(pr => pr.result).reduce((acc, curr) => acc + curr);
+            return player.playerResults.filter(pr => pr.session.season.year === currentYear)
+                .map(pr => pr.result).reduce((acc, curr) => acc + curr, 0);
         }
         return 0;
     }
