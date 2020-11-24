@@ -9,7 +9,7 @@
               session-count.mt-2.min-w-0(:session-count="player.playerResults.length")
               player-last-session.mt-1.min-w-0(:session-date="getLastSessionDate(player)")
             .flex.flex-col(class="lg:flex-row lg:flex-grow lg:justify-around")
-              player-total-result.flex-2.mt-4(:result="getPlayerTotalResult(player)" class="lg:mt-0 lg:w-32")
+              player-total-result.flex-2.mt-4(:result="playerTotalResult" class="lg:mt-0 lg:w-32")
               .flex.flex-col.flex-4.justify-center.mt-2(class="lg:mt-0 lg:w-96")
                 .text-sm.leading-5.text-gray-500 5 dernières sessions
                 .flex.flex-wrap.items-center.text-sm.leading-5.text-gray-500
@@ -22,7 +22,9 @@
 </template>
 
 <script>
+import PlayerService from "../../../services/player-service";
 import PlayerLastSession from "../PlayerLastSession";
+
 import {format} from "date-fns";
 export default {
   name: "PlayerListItem",
@@ -33,6 +35,11 @@ export default {
   data: () => ({
     result: undefined,
   }),
+  computed: {
+    playerTotalResult: function() {
+      return PlayerService.getPlayerTotalResult(this.player);
+    }
+  },
   methods: {
     getLastSessionDate: function(player) {
       if (!player || !player.playerResults || player.playerResults.length === 0) {
@@ -49,12 +56,6 @@ export default {
       let results = [...player.playerResults];
       results.sort((r1, r2) => new Date(r2.session.date) - new Date(r1.session.date));
       return results.slice(0, n);
-    },
-    getPlayerTotalResult: function(player) {
-      if (!this.result) {
-        this.result = player.playerResults.map(pr => pr.result).reduce((acc, curr) => acc + curr);
-      }
-      return this.result;
     }
   }
 }

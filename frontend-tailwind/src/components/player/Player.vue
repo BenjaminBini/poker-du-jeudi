@@ -1,46 +1,85 @@
 <template lang="pug">
-  div(class="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 shadow overflow-hidden sm:rounded-md")
-    div(class="-ml-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap")
-      div(class="ml-4 mt-4")
-        div(class="flex items-center")
-          div(class="flex-shrink-0")
-            img(class="h-12 w-12 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="")
-          div(class="ml-4")
-            h3(class="text-lg leading-6 font-medium text-gray-900")
-              | Tom Cook
-            p(class="text-sm text-gray-500")
-              a(href="#")
-                | @tom_cook
-      div(class="ml-4 mt-4 flex-shrink-0 flex")
-        button(type="button" class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500")
-          // Heroicon name: phone
-          svg(class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="currentColor" aria-hidden="true")
-            path(d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z")
-          span
-            | Phone
-        button(type="button" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500")
-          // Heroicon name: mail
-          svg(class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="currentColor" aria-hidden="true")
-            path(d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z")
-            path(d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z")
-          span
-            | Email
-
+  div(v-if="loaded")
+    dl(class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3")
+      div(class="bg-white overflow-hidden shadow rounded-lg")
+        div(class="px-4 py-5 sm:p-6")
+          div(class="flex items-center")
+            div(class="flex-shrink-0 bg-indigo-500 rounded-md p-3")
+              CashIcon(class="h-6 w-6 text-white")
+            div(class="ml-5 w-0 flex-1")
+              dt(class="text-sm font-medium text-gray-500 truncate") Résultat total
+              dd
+                div(class="text-2xl font-semibold text-gray-900") {{playerTotalResult}} €
+      div(class="bg-white overflow-hidden shadow rounded-lg")
+        div(class="px-4 py-5 sm:p-6")
+          div(class="flex items-center")
+            div(class="flex-shrink-0 bg-indigo-500 rounded-md p-3")
+              PresentationChartLineIcon(class="h-6 w-6 text-white")
+            div(class="ml-5 w-0 flex-1")
+              dt(class="text-sm font-medium text-gray-500 truncate") Résultat de la saison
+              dd(class="flex items-center space-x-3")
+                div(class="text-2xl font-semibold text-gray-900") {{currentSeasonResult}} €
+                result-badge(:player-result="dateOrderedResults[0]")
+      div(class="bg-white overflow-hidden shadow rounded-lg")
+        div(class="px-4 py-5 sm:p-6")
+          div(class="flex items-center")
+            div(class="flex-shrink-0 bg-indigo-500 rounded-md p-3")
+              CalendarIcon(class="h-6 w-6 text-white")
+            div(class="ml-5 w-0 flex-1")
+              dt(class="text-sm font-medium text-gray-500 truncate") Participations
+              dd(class="flex items-baseline")
+                div(class="text-2xl font-semibold text-gray-900") {{player.playerResults.length}}
+    div(class="mt-14 bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200")
+      div(class="px-4 py-5 sm:px-6")
+        h2.text-xl Résultats
+        // Content goes here
+        // We use less vertical padding on card headers on desktop than on body sections
+      div(class="px-4 py-5 sm:p-6")
+        ResultChart(:results="player.playerResults", class="relative", style="height: 60vh")
 </template>
 
 <script>
 import PlayerService from "../../services/player-service";
+import { CalendarIcon, CashIcon, PresentationChartLineIcon } from "@vue-hero-icons/outline"
+import ResultChart from "./ResultChart";
 
 export default {
   name: "Player",
+  components: {
+    CalendarIcon,
+    CashIcon,
+    PresentationChartLineIcon,
+    ResultChart
+  },
   data: () => ({
     player: Object,
+    loaded: false,
   }),
+  computed: {
+    playerTotalResult: function() {
+      if (this.player) {
+        return PlayerService.getPlayerTotalResult(this.player);
+      }
+      return 0;
+    },
+    currentSeasonResult: function() {
+      if (this.player) {
+        return PlayerService.getCurrentSeasonResult(this.player);
+      }
+      return 0;
+    },
+    dateOrderedResults: function() {
+      let results = [...this.player.playerResults];
+      return results
+          .sort((r1, r2) => new Date(r2.session.date) - new Date(r1.session.date));
+    }
+  },
   mounted() {
     let playerId = this.$route.params.id;
     PlayerService.getPlayer(playerId).then(response => {
       this.player = response.data;
       this.$store.commit('setPageTitle', this.player.firstName);
+      this.loaded = true;
     });
   }
 }
