@@ -1,7 +1,7 @@
 import Foo from "../components/sample/Foo";
 import Sessions from "../components/Sessions";
 import Players from "../components/player/players-list/Players";
-import Player from "../components/player/Player";
+import Player from "../components/player/player-detail/Player";
 
 const routes = [
     {

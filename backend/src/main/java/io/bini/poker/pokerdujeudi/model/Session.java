@@ -32,6 +32,9 @@ public class Session {
 
     private Date date;
 
+    @Transient
+    private long playersCount;
+
     public String displayDate() {
         SimpleDateFormat format = new SimpleDateFormat("EEEE dd MMMM yyyy");
         return format.format(this.date);
@@ -50,6 +53,11 @@ public class Session {
     @JsonIgnore
     public int getChangeValue() {
         return - this.playerResults.stream().mapToInt(PlayerResult::getResult).sum();
+    }
+
+    @PostLoad
+    private void onLoad() {
+        this.playersCount = this.playerResults.size();
     }
 
 }

@@ -13,6 +13,7 @@
     "@tailwindcss/typography": "^0.3.1",
     "@tailwindcss/ui": "^0.7.2",
     "@vue-hero-icons/outline": "^1.6.3",
+    "@vue-hero-icons/solid": "^1.6.3",
     "autoprefixer": "^9",
     "axios": "^0.21.0",
     "chart.js": "^2.9.4",

@@ -1,5 +1,7 @@
 <script>
 import { Line } from 'vue-chartjs';
+import {format} from 'date-fns';
+import { fr } from 'date-fns/locale'
 
 const color = function(context) {
   const index = context.dataIndex;
@@ -24,16 +26,7 @@ let options = {
         beginAtZero: true,
       }
     }],
-    xAxes: [{
-      type: "time",
-      distribution: 'series',
-      time: {
-        unit: 'year',
-      },
-      ticks: {
-          source: null,
-      }
-    }],
+    xAxes: [{}],
   }
 };
 
@@ -43,13 +36,24 @@ const updateChart = function(results, renderFunction) {
       .map(pr => pr.result);
   let sum;
   const cumulatedResult = resultsData.map(r => sum = (sum || 0) + r);
-  let resultLabels = results.map(pr => new Date(pr.session.date));
-  if (resultLabels.length < 50) {
-    options.scales.xAxes[0].time.unit = 'month';
-    options.scales.xAxes[0].ticks.minRotation = 40;
+  let resultLabels;
+  if (cumulatedResult.length < 50) {
+    resultLabels = results.map(pr => format(new Date(pr.session.date), "dd/MM/yyy", {locale: fr}));
+    options.scales.xAxes[0] = {
+    };
   } else {
-    options.scales.xAxes[0].time.unit = 'year';
-    options.scales.xAxes[0].ticks.minRotation = 0;
+    resultLabels = results.map(pr => new Date(pr.session.date));
+    options.scales.xAxes[0] = {
+      type: "time",
+      distribution: 'series',
+      time: {
+        unit: 'year',
+      },
+      ticks: {
+        source: null,
+        minRotation: 0,
+      }
+    };
   }
   let data = {
     datasets: [{
