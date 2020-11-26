@@ -24,18 +24,10 @@ export default {
     YearFilter,
     ResultChart,
   },
-  props: ["results"],
+  props: ["results", "yearsPlayed", "selectedYear"],
   data: () => ({
-    selectedYear: 0,
   }),
   computed: {
-    yearsPlayed: function() {
-      if (this.results) {
-        const setOfYears = new Set(this.results.map(pr => pr.session.season.year));
-        return [...setOfYears];
-      }
-      return [];
-    },
     filteredResults: function() {
       let results = [...this.results];
       return results
@@ -45,8 +37,10 @@ export default {
   },
   methods: {
     yearSelected(event, year) {
-      this.selectedYear = year;
+      this.$emit('year-selected', event, year)
     }
+  },
+  mounted() {
   }
 }
 </script>
