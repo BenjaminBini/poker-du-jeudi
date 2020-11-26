@@ -19,6 +19,12 @@
       StatCard(label="Dernières places" :stat="lastPlaces")
         ChevronDoubleDownIcon(class="h-6 w-6 text-white")
     ResultChartContainer(:results="player.playerResults" class="mt-7")
+
+    div
+      h2(class="p-6 pb-0 text-gray-600 text-xl font-medium tracking-wide") Sessions du joueur
+      ul(class="mt-6 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4")
+        PlayerSessionCard(v-for="result in player.playerResults.sort((r1, r2) => new Date(r2.session.date) - new Date(r1.session.date))" :result="result")
+
 </template>
 
 <script>
@@ -29,6 +35,7 @@ import { AcademicCapIcon } from "@vue-hero-icons/solid"
 import ResultChart from "./ResultChart";
 import ResultChartContainer from "./ResultChartContainer";
 import StatCard from "./StatCard";
+import PlayerSessionCard from "./PlayerSessionCard";
 
 export default {
   name: "Player",
@@ -39,6 +46,7 @@ export default {
     CashIcon,
     ChevronDoubleDownIcon,
     LightningBoltIcon,
+    PlayerSessionCard,
     PresentationChartLineIcon,
     ShieldExclamationIcon,
     TrendingDownIcon,
