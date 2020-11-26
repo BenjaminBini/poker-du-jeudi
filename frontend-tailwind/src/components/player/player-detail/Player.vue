@@ -23,7 +23,7 @@
     div
       h2(class="p-6 pb-0 text-gray-600 text-xl font-medium tracking-wide") Sessions du joueur
       ul(class="mt-6 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4")
-        PlayerSessionCard(v-for="result in player.playerResults.sort((r1, r2) => new Date(r2.session.date) - new Date(r1.session.date))" :result="result")
+        PlayerSessionCard(v-for="result in [...player.playerResults].sort((r1, r2) => new Date(r2.session.date) - new Date(r1.session.date))" :result="result")
 
 </template>
 
