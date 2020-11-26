@@ -2,7 +2,7 @@
   div(class="bg-white overflow-hidden shadow rounded-lg")
     div(class="px-4 py-5 sm:p-6")
       div(class="flex items-center")
-        div(class="flex-shrink-0 bg-indigo-500 rounded-md p-3")
+        div(class="flex-shrink-0 rounded-md p-3" :class="colorClass ? colorClass : 'bg-indigo-500'")
           slot
         div(class="ml-5 w-0 flex-1")
           dt(class="text-sm font-medium text-gray-500 truncate") {{label}}
@@ -14,7 +14,7 @@
 <script>
 export default {
   name: "StatCard",
-  props: ["label", "stat", "change"]
+  props: ["label", "stat", "change", "colorClass"]
 }
 </script>
 
