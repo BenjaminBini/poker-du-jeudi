@@ -6,9 +6,9 @@
       div(class="flex-1 px-4 py-2 text-sm truncate")
         a(href="#" class="text-gray-900 font-medium hover:text-gray-600") {{formatDate(result.session.date)}}
         div(class="text-gray-500 flex items-center")
-          StarIcon(v-if="result.rank == 1" class="mr-1 h-6 w-6 text-yellow-400")
+          StarIcon(v-if="result.rank === 1" class="mr-1 h-6 w-6 text-yellow-400")
           ArrowCircleDownIcon(v-if="result.last" class="mr-1 h-5 w-5 text-red-500")
-          | {{result.rank}}e sur {{result.session.playersCount}} joueurs
+          | {{result.last ? result.playersCount : result.rank}}e sur {{result.playersCount}} joueurs
 
 </template>
 

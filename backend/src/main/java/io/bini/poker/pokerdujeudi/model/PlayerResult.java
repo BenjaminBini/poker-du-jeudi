@@ -17,14 +17,14 @@ public class PlayerResult {
 
     @ManyToOne
     @MapsId("playerId")
-    @JoinColumn(name = "playerId")
+    @JoinColumn(name = "playerId", columnDefinition = "BIGINT(20)")
     @JsonIgnoreProperties("playerResults")
     private Player player;
 
     @ManyToOne
     @MapsId("sessionId")
-    @JoinColumn(name = "sessionId")
-    @JsonIgnoreProperties("playerResults")
+    @JoinColumn(name = "sessionId", columnDefinition = "BIGINT(20)")
+    @JsonIgnoreProperties(value = {"playerResults", "rankings"})
     private Session session;
 
     @Transient
@@ -32,6 +32,9 @@ public class PlayerResult {
 
     @Transient
     private boolean isLast;
+
+    @Transient
+    private int playersCount;
 
     @PostLoad
     private void onLoad() {
@@ -42,6 +45,8 @@ public class PlayerResult {
 
         Optional<PlayerResult> lastResult = sortedResultsSupplier.get().findFirst();
         this.isLast = lastResult.isPresent() && lastResult.get().result == this.result;
+
+        this.playersCount = this.session.getPlayerResults().size();
     }
 
     private int buyIns = 0;

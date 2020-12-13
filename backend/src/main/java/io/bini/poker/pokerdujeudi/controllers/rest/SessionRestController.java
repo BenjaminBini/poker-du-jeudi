@@ -1,8 +1,6 @@
 package io.bini.poker.pokerdujeudi.controllers.rest;
 
 import io.bini.poker.pokerdujeudi.dto.SessionResultDTO;
-import io.bini.poker.pokerdujeudi.model.Player;
-import io.bini.poker.pokerdujeudi.model.PlayerResult;
 import io.bini.poker.pokerdujeudi.model.Session;
 import io.bini.poker.pokerdujeudi.service.player.PlayerService;
 import io.bini.poker.pokerdujeudi.service.result.PlayerResultService;
@@ -10,7 +8,6 @@ import io.bini.poker.pokerdujeudi.service.session.SessionService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/sessions")
@@ -32,11 +29,22 @@ public class SessionRestController {
 
     @GetMapping("{sessionId}")
     public Session getSession(@PathVariable long sessionId) {
-        return this.sessionService.get(sessionId).get();
+        return this.sessionService.get(sessionId);
+    }
+
+    @GetMapping("latest")
+    public Session getLatestSession() {
+        return this.sessionService.getLastSession();
+    }
+
+    @GetMapping("latest/{season}")
+    public Session getLatestSession(@PathVariable String season) {
+        return this.sessionService.getLastSession(season);
     }
 
     @PostMapping("{sessionId}/player/{playerId}")
     public Session updatePlayerResults(@PathVariable long sessionId, @PathVariable long playerId, @RequestBody SessionResultDTO sessionResultDTO) {
+        /* TODO : à refaire
         Session session = this.sessionService.get(sessionId).get();
         Optional<PlayerResult> maybePlayerResult = session.getPlayerResults().stream().filter(s -> s.getPlayer().getPlayerId() == playerId).findFirst();
         if (!maybePlayerResult.isPresent()) {
@@ -53,13 +61,15 @@ public class SessionRestController {
             playerResult.setResult(sessionResultDTO.getResult());
         }
         this.sessionService.save(session);
-        return session;
+
+         */
+        return null;
     }
 
     @DeleteMapping("{sessionId}/player/{playerId}")
-    public Session deletePlayerResult(@PathVariable long sessionId, @PathVariable long playerId) {
+    public Session deletePlayerResult(@PathVariable int sessionId, @PathVariable int playerId) {
         this.playerResultService.delete(playerId, sessionId);
-        Session session = this.sessionService.get(sessionId).get();
+        Session session = this.sessionService.get(sessionId);
         session.getPlayerResults().removeIf(r -> r.getPlayer().getPlayerId() == playerId);
         return session;
     }

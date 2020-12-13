@@ -29,7 +29,7 @@ public class PlayerResultService {
         return this.playerResultRepository.findByPlayer(player);
     }
 
-    public void delete(long playerId, long sessionId) {
+    public void delete(int playerId, int sessionId) {
         this.playerResultRepository.deleteById(new PlayerResultKey(playerId, sessionId));
     }
 

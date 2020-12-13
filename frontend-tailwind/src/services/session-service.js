@@ -5,6 +5,12 @@ export default {
         return Axios.get('/sessions/');
     },
     getSession(id) {
-        return Axios.get('/sessions/' + id)
+        return Axios.get('/sessions/' + id);
+    },
+    getLatestSessionByYear(year) {
+        return Axios.get('/sessions/latest/' + year);
+    },
+    getLatestSession() {
+        return Axios.get('/sessions/latest/');
     }
 }

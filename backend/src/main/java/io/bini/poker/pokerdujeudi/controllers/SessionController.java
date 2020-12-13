@@ -1,6 +1,6 @@
 package io.bini.poker.pokerdujeudi.controllers;
 
-import io.bini.poker.pokerdujeudi.dto.SessionDTO;
+import io.bini.poker.pokerdujeudi.dto.CreateSessionDTO;
 import io.bini.poker.pokerdujeudi.model.*;
 import io.bini.poker.pokerdujeudi.service.place.PlaceService;
 import io.bini.poker.pokerdujeudi.service.player.PlayerService;
@@ -50,8 +50,8 @@ public class SessionController {
 
     @GetMapping("{sessionId}")
     public String session(Model model, @PathVariable long sessionId) {
-        Optional<Session> session = this.sessionService.get(sessionId);
-        model.addAttribute("session", session.get());
+        Session session = this.sessionService.get(sessionId);
+        model.addAttribute("session", session);
         model.addAttribute("active", "sessions");
         Session nextSession = this.sessionService.getNextSession(sessionId);
         Session previousSession = this.sessionService.getPreviousSession(sessionId);
@@ -75,10 +75,10 @@ public class SessionController {
     }
 
     @PostMapping("add")
-    public String addSession(Model model, @ModelAttribute SessionDTO sessionDTO) {
+    public String addSession(Model model, @ModelAttribute CreateSessionDTO createSessionDTO) {
         Session session = new Session();
         List<PlayerResult> playerResults = new ArrayList<>();
-        for (long playerId : sessionDTO.getPlayerIds()) {
+        for (long playerId : createSessionDTO.getPlayerIds()) {
             Optional<Player> player = this.playerService.get(playerId);
             if (player.isPresent()) {
                 PlayerResult playerResult = new PlayerResult();
@@ -87,19 +87,16 @@ public class SessionController {
                 playerResults.add(playerResult);
             }
         }
-        session.setPlayerResults(playerResults);
-        session.setDate(sessionDTO.getDate());
-        Optional<Place> place = this.placeService.get(sessionDTO.getPlaceId());
-        if (place.isPresent()) {
-            session.setPlace(place.get());
-        }
 
-        Optional<Season> season = this.seasonService.get(sessionDTO.getSeasonId());
-        if (season.isPresent()) {
-            session.setSeason(season.get());
-        }
+        session.setPlayerResults(playerResults);
+        session.setDate(createSessionDTO.getDate());
+        Optional<Place> place = this.placeService.get(createSessionDTO.getPlaceId());
+        place.ifPresent(session::setPlace);
+
+        Optional<Season> season = this.seasonService.get(createSessionDTO.getSeasonId());
+        season.ifPresent(session::setSeason);
         this.sessionService.save(session);
-        playerResults.stream().forEach(r -> playerResultService.save(r));
+        playerResults.forEach(playerResultService::save);
         return "redirect:/sessions/" + session.getSessionId();
     }
 

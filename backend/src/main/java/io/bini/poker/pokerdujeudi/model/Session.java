@@ -3,17 +3,26 @@ package io.bini.poker.pokerdujeudi.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity(name="session")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class Session {
+    @Override
+    public String toString() {
+        return String.valueOf(this.sessionId);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long sessionId;
@@ -30,34 +39,16 @@ public class Session {
     @JsonIgnoreProperties(value = {"session", "playerResultKey"})
     private List<PlayerResult> playerResults;
 
+    @OneToMany(fetch=FetchType.EAGER, mappedBy = "rankingKey.sessionId")
+    @Fetch(FetchMode.SUBSELECT)
+    @JsonIgnoreProperties(value = {"session"})
+    private List<Ranking> rankings;
+
     private Date date;
 
     @Transient
-    private long playersCount;
+    private Session previousSession;
 
-    public String displayDate() {
-        SimpleDateFormat format = new SimpleDateFormat("EEEE dd MMMM yyyy");
-        return format.format(this.date);
-    }
-
-    @JsonIgnore
-    public PlayerResult getBestResult() {
-        return this.playerResults.stream().max(Comparator.comparingInt(PlayerResult::getResult)).get();
-    }
-
-    @JsonIgnore
-    public PlayerResult getWorstResult() {
-        return this.playerResults.stream().min(Comparator.comparingInt(PlayerResult::getResult)).get();
-    }
-
-    @JsonIgnore
-    public int getChangeValue() {
-        return - this.playerResults.stream().mapToInt(PlayerResult::getResult).sum();
-    }
-
-    @PostLoad
-    private void onLoad() {
-        this.playersCount = this.playerResults.size();
-    }
-
+    @Transient
+    private Session nextSession;
 }

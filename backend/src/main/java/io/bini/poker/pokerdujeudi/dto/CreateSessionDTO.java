@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class SessionDTO {
+public class CreateSessionDTO {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date date;
     private List<Long> playerIds;

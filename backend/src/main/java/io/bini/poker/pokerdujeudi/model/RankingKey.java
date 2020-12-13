@@ -11,7 +11,8 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerResultKey implements Serializable {
-    private int playerId;
-    private int sessionId;
+public class RankingKey implements Serializable {
+    private long playerId;
+    private long sessionId;
+    private boolean isGeneral;
 }
