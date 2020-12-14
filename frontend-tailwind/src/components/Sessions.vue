@@ -1,16 +1,20 @@
 <template lang="pug">
-  tw-table(:items="sessions", :cols="cols")
+  div(class="bg-white shadow overflow-hidden sm:rounded-md")
+    ul
+      li(v-for="(session, index) in sessions"
+        :class="index > 0 ? 'border-t border-gray-200' : ''")
+        session-list-item(:session="session")
 </template>
 
 <script>
 import SessionService from "../services/session-service";
 import {format} from 'date-fns';
 import { fr } from 'date-fns/locale'
-import TailwindTable from "./table/Table";
+import SessionListItem from "@/components/session/SessionListItem";
 
 export default {
   name: "poker-sessions",
-  components: {TailwindTable},
+  components: {SessionListItem},
   data: () => ({
     sessions: [],
     cols: [{

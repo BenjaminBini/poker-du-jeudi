@@ -5,7 +5,7 @@
           player-picture.mr-6.flex-shrink-0.hidden
           .flex.flex-col.min-w-0(class="lg:flex-row lg:flex-grow lg:items-center")
             .flex.flex-col.min-w-0(class="lg:w-64")
-              .text-sm.leading-5.font-medium.text-indigo-600.truncate {{player.firstName}}
+              .text-indigo-600.truncate {{player.firstName}}
               session-count.mt-2.min-w-0(:session-count="player.playerResults.length")
               player-last-session.mt-1.min-w-0(:session-date="getLastSessionDate(player)")
             .flex.flex-col(class="lg:flex-row lg:flex-grow lg:justify-around")
