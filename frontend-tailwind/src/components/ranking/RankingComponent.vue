@@ -74,7 +74,7 @@ export default {
       return !activePlayerRanking || activePlayerRanking.sessionsCount >= this.sessionsCountToBeReg;
     },
     sessionsCountToBeReg: function() {
-      return this.seasonRanking ? 5 : 15;
+      return this.seasonRanking ? 3 : 15;
     },
     table: function() {
       if (!Array.isArray(this.rankings)) return [];
