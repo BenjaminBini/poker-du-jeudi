@@ -12,7 +12,7 @@ import javax.persistence.Id;
 @Data
 @Entity(name="user")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class User {
+public class ApplicationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;

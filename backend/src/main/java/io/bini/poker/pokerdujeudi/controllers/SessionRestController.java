@@ -1,4 +1,4 @@
-package io.bini.poker.pokerdujeudi.controllers.rest;
+package io.bini.poker.pokerdujeudi.controllers;
 
 import io.bini.poker.pokerdujeudi.dto.SessionResultDTO;
 import io.bini.poker.pokerdujeudi.model.Session;

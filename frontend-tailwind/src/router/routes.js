@@ -2,6 +2,7 @@ import Sessions from "../components/Sessions";
 import Players from "../components/player/players-list/Players";
 import Player from "../components/player/player-detail/Player";
 import Home from "@/components/Home";
+import Session from "@/components/session/Session";
 
 const routes = [
     {
@@ -18,6 +19,12 @@ const routes = [
         meta: {
             label: "Sessions",
             displayInMenu: true
+        },
+    }, {
+        path: "/sessions/:id",
+        component: Session,
+        meta: {
+            displayInMenu: false
         },
     }, {
         path: "/players",

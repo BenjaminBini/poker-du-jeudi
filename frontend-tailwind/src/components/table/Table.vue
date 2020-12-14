@@ -17,7 +17,9 @@
               )
                 td.px-6.py-4.whitespace-no-wrap.text-sm.leading-5.text-gray-500(
                   v-for="col in cols"
-                ) {{computeField(col, item)}}
+                )
+                  span(v-if="!col.linkFunction") {{computeField(col, item)}}
+                  router-link(v-if="!!col.linkFunction" :to="col.linkFunction(item)") {{computeField(col, item)}}
 </template>
 
 <script>

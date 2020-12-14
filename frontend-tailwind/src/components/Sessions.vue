@@ -18,6 +18,9 @@ export default {
       label: 'Session',
       formatter: function(value) {
         return format(new Date(value), 'EEEE d MMMM yyyy', {locale: fr});
+      },
+      linkFunction: function(item) {
+        return "/sessions/" + item.sessionId;
       }
     }, {
       field: 'playerResults.length',
@@ -37,16 +40,17 @@ export default {
       label: 'Perdant',
     }]
   }),
-  mounted() {
-    SessionService.getSessions().then(response => {
-      this.sessions = response.data;
-      this.sessions.forEach(s => {
-        s.winner = s.playerResults.reduce((acc, curr) => curr.result > acc.result ? curr : acc, {result: -1});
-        s.loser = s.playerResults.reduce((acc, curr) => curr.result < acc.result ? curr : acc, {result: Number.MAX_VALUE});
-      });
-      this.$store.commit('setPageTitle', this.sessions.length + ' sessions');
-      //this.sessions.sort((s1, s2) => s2.compareTo(s2));
+  async mounted() {
+    const response = await SessionService.getSessions()
+    this.sessions = response.data;
+    this.sessions = this.sessions.sort((b, a) => new Date(a.date) - new Date(b.date));
+    this.sessions.forEach(s => {
+      s.winner = s.playerResults.reduce((acc, curr) => curr.result > acc.result ? curr : acc, {result: -1});
+      s.loser = s.playerResults.reduce((acc, curr) => curr.result < acc.result ? curr : acc, {result: Number.MAX_VALUE});
     });
+    this.$store.commit('setPageTitle', this.sessions.length + ' sessions');
+    //this.sessions.sort((s1, s2) => s2.compareTo(s2));
+
   },
 }
 </script>

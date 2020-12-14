@@ -1,4 +1,4 @@
-package io.bini.poker.pokerdujeudi.controllers.rest;
+package io.bini.poker.pokerdujeudi.controllers;
 
 import io.bini.poker.pokerdujeudi.model.Place;
 import io.bini.poker.pokerdujeudi.service.place.PlaceService;
