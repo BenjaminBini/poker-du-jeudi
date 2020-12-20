@@ -1,9 +1,7 @@
 <template lang="pug">
-  div(class="bg-white shadow overflow-hidden sm:rounded-md")
-    ul
-      li(v-for="(session, index) in sessions"
-        :class="index > 0 ? 'border-t border-gray-200' : ''")
-        session-list-item(:session="session")
+  ul(class="mt-2 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3")
+    li(v-for="(session, index) in sessions")
+      session-list-item(:session="session")
 </template>
 
 <script>

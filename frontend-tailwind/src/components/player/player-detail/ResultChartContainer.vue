@@ -3,7 +3,7 @@
     div(class="bg-white px-4 py-5 sm:px-6")
       div(class="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap")
         div(class="ml-4 mt-2")
-          h3(class="text-lg leading-6 font-medium text-gray-900")
+          h3(class="text-xl leading-6 font-bold text-indigo-500")
             | Résultats
         div(v-if="yearsPlayed.length > 1" class="ml-4 mt-2 flex-shrink-0 space-x-3")
           YearFilter(:year="0" label="Tout" :selected-year="selectedYear" @year-selected="yearSelected")

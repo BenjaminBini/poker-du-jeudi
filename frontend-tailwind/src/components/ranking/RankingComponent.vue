@@ -1,8 +1,10 @@
 <template lang="pug">
-  div(class="flex flex-col mt-6")
+  div(class="flex flex-col shadow overflow-hidden border-gray-200 sm:rounded-lg")
+    div(class="p-2 pl-3 text-indigo-500 text-l font-bold text-center tracking-wide bg-white")
+      h2 {{title}}
     div(class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8")
       div(class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8")
-        div(class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg")
+        div(class="overflow-hidden border-b border-t border-gray-200")
           nav(class="bg-white flex justify-between -space-x-px")
             div(class="w-full flex justify-evenly items-center")
               button(@click="forceShowReg = true"
@@ -29,20 +31,21 @@
             tbody
               tr(v-for="(row, index) in table"
                 :key="row.playerId"
-                :class="{ 'bg-gray-50': index % 2 === 0, 'bg-white': index % 2 !== 0, 'bg-indigo-500': row.playerId === activePlayerId }"
+                :class="{ 'bg-gray-50': index % 2 === 0, 'bg-white': index % 2 !== 0, 'bg-indigo-500': row.isActive }"
               )
-                td(:class="row.playerId === activePlayerId ? 'text-white' : 'text-gray-900'"
+                td(:class="row.isActive ? 'text-white' : 'text-gray-900'"
                   class="px-3 py-2 whitespace-nowrap text-sm font-medium")
                   | {{row.rank}}
-                td(v-if="row.playerId !== activePlayerId"
+                td(v-if="!row.isActive"
                   class="px-0 py-3 whitespace-nowrap text-sm font-medium text-indigo-600")
                   router-link(:to="'/players/' + row.playerId") {{row.playerName}}
-                td(v-if="row.playerId === activePlayerId"
+                  span(v-if="row.isPresent" class="ml-2 inline-block bg-green-600 h-2 w-2 rounded-lg")
+                td(v-if="row.isActive"
                   class="px-0 py-3 whitespace-nowrap text-sm font-medium text-white") {{row.playerName}}
-                td(:class="row.playerId === activePlayerId ? 'text-white' : 'text-gray-500'"
+                td(:class="row.isActive ? 'text-white' : 'text-gray-500'"
                   class="px-0 py-3 whitespace-nowrap text-sm font-medium")
                   | {{row.sessionsCount}}
-                td(:class="row.playerId === activePlayerId ? 'text-white' : 'text-gray-900'"
+                td(:class="row.isActive ? 'text-white' : 'text-gray-900'"
                   class="px-0 py-3 whitespace-nowrap text-sm")
                   | {{row.total}} €
 </template>
@@ -52,7 +55,7 @@ import { UserGroupIcon, UsersIcon } from "@vue-hero-icons/solid";
 
 export default {
   name: "RankingComponent",
-  props: ["rankings", "previousRankings", "activePlayerId", "seasonRanking"],
+  props: ["rankings", "previousRankings", "activePlayerId", "activePlayerIds", "seasonRanking", "title"],
   components: {
     UserGroupIcon,
     UsersIcon,
@@ -74,7 +77,7 @@ export default {
       return !activePlayerRanking || activePlayerRanking.sessionsCount >= this.sessionsCountToBeReg;
     },
     sessionsCountToBeReg: function() {
-      return this.seasonRanking ? 3 : 15;
+      return this.seasonRanking ? 5 : 15;
     },
     table: function() {
       if (!Array.isArray(this.rankings)) return [];
@@ -89,7 +92,9 @@ export default {
             rank: i + 1,
             playerId: r.player.playerId,
             playerName: r.player.firstName,
-            sessionsCount: r.sessionsCount
+            sessionsCount: r.sessionsCount,
+            isActive: r.player.playerId === this.activePlayerId,
+            isPresent: this.activePlayerIds && this.activePlayerIds.includes(r.player.playerId),
           }
       });
     }

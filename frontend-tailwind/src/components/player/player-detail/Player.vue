@@ -5,7 +5,7 @@
         CashIcon(class="h-6 w-6 text-white")
       StatCard(:label="'Résultat de ' + (selectedYear === 0 ? yearsPlayed[0] : selectedYear)" :stat="currentSeasonResult + '€'" :color-class="currentSeasonResult >= 0 ? 'bg-green-500' : 'bg-red-500'")
         PresentationChartLineIcon(class="h-6 w-6 text-white")
-      StatCard(label="Sessions" :stat="player.playerResults.length" color-class="bg-green-500")
+      StatCard(label="Participations" :stat="player.playerResults.length" color-class="bg-green-500")
         CalendarIcon(class="h-6 w-6 text-white")
       StatCard(label="Premières places" :stat="firstPlaces" color-class="bg-green-500")
         AcademicCapIcon(class="h-6 w-6 text-white")
@@ -26,14 +26,13 @@
           span(v-if="selectedYear > 0") &nbsp;en {{selectedYear}}
         ul(class="mt-6 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2")
           PlayerSessionCard(v-for="result in filteredYears" :result="result" :key="result.session.sessionId")
-      div(class="w-1/2 flex space-x-6")
-        div(class="w-1/2")
-          h2(class="p-6 pl-3 pb-0 text-gray-600 text-xl font-medium tracking-wide") Classement général
-          RankingComponent(:rankings="generalRankings" :previous-rankings="previousRankings" :active-player-id="player.playerId" :season-ranking="false")
-
-        div(class="w-1/2")
-          h2(class="p-6 pl-3 pb-0 text-gray-600 text-xl font-medium tracking-wide") Classement {{selectedYear === 0 ? yearsPlayed[0] : selectedYear}}
-          RankingComponent(:rankings="rankings" :previous-rankings="previousRankings" :active-player-id="player.playerId" :season-ranking="true")
+      div(class="w-1/2")
+        h2(class="mb-6 p-6 pl-3 pb-0 text-gray-600 text-xl font-medium tracking-wide") Classements
+        div(class="flex space-x-8")
+          div(class="w-1/2")
+            RankingComponent(:rankings="generalRankings" :previous-rankings="previousRankings" :active-player-id="player.playerId" :season-ranking="false" title="Classement général")
+          div(class="w-1/2")
+            RankingComponent(:rankings="rankings" :previous-rankings="previousRankings" :active-player-id="player.playerId" :season-ranking="true" :title="`Classement ${selectedYear === 0 ? yearsPlayed[0] : selectedYear}`")
 
 </template>
 
