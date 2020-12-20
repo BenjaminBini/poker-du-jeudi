@@ -1,17 +1,46 @@
-<template lang="pug">
-  div(v-if="results.length > 1" class="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200")
-    div(class="bg-white px-4 py-5 sm:px-6")
-      div(class="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap")
-        div(class="ml-4 mt-2")
-          h3(class="text-xl leading-6 font-bold text-indigo-500")
-            | Résultats
-        div(v-if="yearsPlayed.length > 1" class="ml-4 mt-2 flex-shrink-0 space-x-3")
-          YearFilter(:year="0" label="Tout" :selected-year="selectedYear" @year-selected="yearSelected")
-          YearFilter(v-for="year in yearsPlayed" :year="year" :label="year" :selected-year="selectedYear" @year-selected="yearSelected")
-      // Content goes here
-      // We use less vertical padding on card headers on desktop than on body sections
-    div(class="px-4 py-5 sm:p-6")
-      ResultChart(:results="filteredResults", class="relative", style="height: 400px")
+<template>
+  <div
+    class="overflow-hidden bg-white divide-y divide-gray-200 rounded-lg shadow"
+    v-if="results.length > 1"
+  >
+    <div class="px-4 py-5 bg-white sm:px-6">
+      <div
+        class="flex flex-wrap items-center justify-between -mt-2 -ml-4 sm:flex-nowrap"
+      >
+        <div class="mt-2 ml-4">
+          <h3 class="text-xl font-bold leading-6 text-indigo-500">Résultats</h3>
+        </div>
+        <div
+          class="flex-shrink-0 mt-2 ml-4 space-x-3"
+          v-if="yearsPlayed.length > 1"
+        >
+          <YearFilter
+            :year="0"
+            label="Tout"
+            :selected-year="selectedYear"
+            @year-selected="yearSelected"
+          ></YearFilter>
+          <YearFilter
+            v-for="year in yearsPlayed"
+            :key="year"
+            :year="year"
+            :label="year"
+            :selected-year="selectedYear"
+            @year-selected="yearSelected"
+          ></YearFilter>
+        </div>
+      </div>
+      <!-- Content goes here-->
+      <!-- We use less vertical padding on card headers on desktop than on body sections-->
+    </div>
+    <div class="px-4 py-5 sm:p-6">
+      <ResultChart
+        class="relative"
+        :results="filteredResults"
+        style="height: 400px"
+      ></ResultChart>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -25,26 +54,27 @@ export default {
     ResultChart,
   },
   props: ["results", "yearsPlayed", "selectedYear"],
-  data: () => ({
-  }),
+  data: () => ({}),
   computed: {
-    filteredResults: function() {
+    filteredResults: function () {
       let results = [...this.results];
       return results
-          .sort((r1, r2) => new Date(r2.session.date) - new Date(r1.session.date))
-          .filter(r => this.selectedYear === 0 || r.session.season.year === this.selectedYear);
-    }
+        .sort((r1, r2) => new Date(r2.session.date) - new Date(r1.session.date))
+        .filter(
+          (r) =>
+            this.selectedYear === 0 ||
+            r.session.season.year === this.selectedYear
+        );
+    },
   },
   methods: {
     yearSelected(event, year) {
-      this.$emit('year-selected', event, year)
-    }
+      this.$emit("year-selected", event, year);
+    },
   },
-  mounted() {
-  }
-}
+  mounted() {},
+};
 </script>
 
 <style scoped>
-
 </style>

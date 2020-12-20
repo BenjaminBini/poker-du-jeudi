@@ -1,11 +1,21 @@
-<template lang="pug">
-  div(v-if="season.length > 0" class="w-1/2 flex space-x-6")
-    div(class="w-1/2")
-      RankingComponent(:rankings="rankings" :season-ranking="false" title="Classement général")
-
-    div(class="w-1/2")
-      h2(class="pl-3 pb-0 text-white text-xl font-medium tracking-wide")
-      RankingComponent(:rankings="rankings" :season-ranking="true" :title="`Classement ${season}`")
+<template>
+  <div class="flex w-1/2 space-x-6" v-if="season.length &gt; 0">
+    <div class="w-1/2">
+      <RankingComponent
+        :rankings="rankings"
+        :season-ranking="false"
+        title="Classement général"
+      ></RankingComponent>
+    </div>
+    <div class="w-1/2">
+      <h2 class="pb-0 pl-3 text-xl font-medium tracking-wide text-white"></h2>
+      <RankingComponent
+        :rankings="rankings"
+        :season-ranking="true"
+        :title="`Classement ${season}`"
+      ></RankingComponent>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -15,20 +25,16 @@ import RankingComponent from "@/components/ranking/RankingComponent";
 export default {
   name: "Home",
   components: {
-    RankingComponent
+    RankingComponent,
   },
   data: () => ({
     rankings: Array,
-    season: ""
+    season: "",
   }),
   mounted: async function () {
     const response = await SessionService.getLatestSession();
     this.season = response.data.season.name;
     this.rankings = [...response.data.rankings];
-  }
-}
+  },
+};
 </script>
-
-<style scoped>
-
-</style>

@@ -4,7 +4,6 @@ import VueRouter from 'vue-router';
 import App from './App.vue';
 import './main.css';
 import routes from "./router/routes";
-import Table from "./components/table/Table";
 import ResultBadge from "./components/player/players-list/ResultBadge";
 import SessionCount from "./components/player/players-list/SessionCount";
 import PlayerListItem from "./components/player/players-list/PlayerListItem";
@@ -16,7 +15,6 @@ Vue.config.productionTip = false;
 Vue.use(Vuex)
 Vue.use(VueRouter);
 
-Vue.component('tw-table', Table);
 Vue.component('result-badge', ResultBadge);
 Vue.component('session-count', SessionCount);
 Vue.component('player-list-item', PlayerListItem);

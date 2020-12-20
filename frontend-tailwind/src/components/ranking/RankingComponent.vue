@@ -1,53 +1,125 @@
-<template lang="pug">
-  div(class="flex flex-col shadow overflow-hidden border-gray-200 sm:rounded-lg")
-    div(class="p-2 pl-3 text-indigo-500 text-l font-bold text-center tracking-wide bg-white")
-      h2 {{title}}
-    div(class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8")
-      div(class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8")
-        div(class="overflow-hidden border-b border-t border-gray-200")
-          nav(class="bg-white flex justify-between -space-x-px")
-            div(class="w-full flex justify-evenly items-center")
-              button(@click="forceShowReg = true"
-                class="py-2 focus:outline-none w-1/2 flex justify-center items-center"
-                :class="showOnlyRegs ? 'bg-indigo-500 text-white' : 'bg-white text-indigo-500'")
-                UsersIcon(class="h-5 w-5 mr-2")
-                span Habitués
-              button(@click="forceShowReg = false"
-                class="py-2 focus:outline-none w-1/2 flex justify-center items-center"
-                :class="!showOnlyRegs ? 'bg-indigo-500 text-white' : 'bg-white text-indigo-500'")
-                UserGroupIcon(class="h-5 w-5 mr-2")
-                span Tous
-          table(class="min-w-full divide-y divide-gray-200 border-t")
-            thead
-              tr
-                th(scope="col" class="px-3 py-2 bg-white text-left text-xs font-medium text-gray-500 uppercase tracking-wider")
-                  | #
-                th(scope="col" class="px-0 py-3 bg-white text-left text-xs font-medium text-gray-500 uppercase tracking-wider")
-                  | Joueur
-                th(scope="col" class="px-0 py-3 bg-white text-left text-xs font-medium text-gray-500 uppercase tracking-wider")
-                  | Part.
-                th(scope="col" class="px-0 py-3 bg-white text-left text-xs font-medium text-gray-500 uppercase tracking-wider")
-                  | Total
-            tbody
-              tr(v-for="(row, index) in table"
+<template>
+  <div
+    class="flex flex-col overflow-hidden border-gray-200 shadow sm:rounded-lg"
+  >
+    <div
+      class="p-2 pl-3 font-bold tracking-wide text-center text-indigo-500 bg-white text-l"
+    >
+      <h2>{{ title }}</h2>
+    </div>
+    <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="overflow-hidden border-t border-b border-gray-200">
+          <nav class="flex justify-between -space-x-px bg-white">
+            <div class="flex items-center w-full justify-evenly">
+              <button
+                class="flex items-center justify-center w-1/2 py-2 focus:outline-none"
+                @click="forceShowReg = true"
+                :class="
+                  showOnlyRegs
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-white text-indigo-500'
+                "
+              >
+                <UsersIcon class="w-5 h-5 mr-2"></UsersIcon
+                ><span>Habitués</span>
+              </button>
+              <button
+                class="flex items-center justify-center w-1/2 py-2 focus:outline-none"
+                @click="forceShowReg = false"
+                :class="
+                  !showOnlyRegs
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-white text-indigo-500'
+                "
+              >
+                <UserGroupIcon class="w-5 h-5 mr-2"></UserGroupIcon
+                ><span>Tous</span>
+              </button>
+            </div>
+          </nav>
+          <table class="min-w-full border-t divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th
+                  class="px-3 py-2 text-xs font-medium tracking-wider text-left text-gray-500 uppercase bg-white"
+                  scope="col"
+                >
+                  #
+                </th>
+                <th
+                  class="px-0 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase bg-white"
+                  scope="col"
+                >
+                  Joueur
+                </th>
+                <th
+                  class="px-0 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase bg-white"
+                  scope="col"
+                >
+                  Part.
+                </th>
+                <th
+                  class="px-0 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase bg-white"
+                  scope="col"
+                >
+                  Total
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(row, index) in table"
                 :key="row.playerId"
-                :class="{ 'bg-gray-50': index % 2 === 0, 'bg-white': index % 2 !== 0, 'bg-indigo-500': row.isActive }"
-              )
-                td(:class="row.isActive ? 'text-white' : 'text-gray-900'"
-                  class="px-3 py-2 whitespace-nowrap text-sm font-medium")
-                  | {{row.rank}}
-                td(v-if="!row.isActive"
-                  class="px-0 py-3 whitespace-nowrap text-sm font-medium text-indigo-600")
-                  router-link(:to="'/players/' + row.playerId") {{row.playerName}}
-                  span(v-if="row.isPresent" class="ml-2 inline-block bg-green-600 h-2 w-2 rounded-lg")
-                td(v-if="row.isActive"
-                  class="px-0 py-3 whitespace-nowrap text-sm font-medium text-white") {{row.playerName}}
-                td(:class="row.isActive ? 'text-white' : 'text-gray-500'"
-                  class="px-0 py-3 whitespace-nowrap text-sm font-medium")
-                  | {{row.sessionsCount}}
-                td(:class="row.isActive ? 'text-white' : 'text-gray-900'"
-                  class="px-0 py-3 whitespace-nowrap text-sm")
-                  | {{row.total}} €
+                :class="{
+                  'bg-gray-50': index % 2 === 0,
+                  'bg-white': index % 2 !== 0,
+                  'bg-indigo-500': row.isActive,
+                }"
+              >
+                <td
+                  class="px-3 py-2 text-sm font-medium whitespace-nowrap"
+                  :class="row.isActive ? 'text-white' : 'text-gray-900'"
+                >
+                  {{ row.rank }}
+                </td>
+                <td
+                  class="px-0 py-3 text-sm font-medium text-indigo-600 whitespace-nowrap"
+                  v-if="!row.isActive"
+                >
+                  <router-link :to="'/players/' + row.playerId">{{
+                    row.playerName
+                  }}</router-link
+                  ><span
+                    class="inline-block w-2 h-2 ml-2 bg-green-600 rounded-lg"
+                    v-if="row.isPresent"
+                  ></span>
+                </td>
+                <td
+                  class="px-0 py-3 text-sm font-medium text-white whitespace-nowrap"
+                  v-if="row.isActive"
+                >
+                  {{ row.playerName }}
+                </td>
+                <td
+                  class="px-0 py-3 text-sm font-medium whitespace-nowrap"
+                  :class="row.isActive ? 'text-white' : 'text-gray-500'"
+                >
+                  {{ row.sessionsCount }}
+                </td>
+                <td
+                  class="px-0 py-3 text-sm whitespace-nowrap"
+                  :class="row.isActive ? 'text-white' : 'text-gray-900'"
+                >
+                  {{ row.total }} €
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -55,53 +127,70 @@ import { UserGroupIcon, UsersIcon } from "@vue-hero-icons/solid";
 
 export default {
   name: "RankingComponent",
-  props: ["rankings", "previousRankings", "activePlayerId", "activePlayerIds", "seasonRanking", "title"],
+  props: [
+    "rankings",
+    "previousRankings",
+    "activePlayerId",
+    "activePlayerIds",
+    "seasonRanking",
+    "title",
+  ],
   components: {
     UserGroupIcon,
     UsersIcon,
   },
   data: () => ({
-    forceShowReg: undefined
+    forceShowReg: undefined,
   }),
   watch: {
-    '$route': function() {
+    $route: function () {
       this.forceShowReg = undefined;
-    }
+    },
   },
   computed: {
-    showOnlyRegs: function() {
+    showOnlyRegs: function () {
       if (this.forceShowReg !== undefined) return this.forceShowReg;
       if (!Array.isArray(this.rankings)) return true;
-      const activePlayerRanking = this.rankings
-          .find(r => r.player.playerId === this.activePlayerId && this.seasonRanking !== r.rankingKey.general);
-      return !activePlayerRanking || activePlayerRanking.sessionsCount >= this.sessionsCountToBeReg;
+      const activePlayerRanking = this.rankings.find(
+        (r) =>
+          r.player.playerId === this.activePlayerId &&
+          this.seasonRanking !== r.rankingKey.general
+      );
+      return (
+        !activePlayerRanking ||
+        activePlayerRanking.sessionsCount >= this.sessionsCountToBeReg
+      );
     },
-    sessionsCountToBeReg: function() {
+    sessionsCountToBeReg: function () {
       return this.seasonRanking ? 5 : 15;
     },
-    table: function() {
+    table: function () {
       if (!Array.isArray(this.rankings)) return [];
-      const rankings = [...this.rankings
-          .filter(r => r.rankingKey.general !== this.seasonRanking
-          && (!this.showOnlyRegs || r.sessionsCount >= this.sessionsCountToBeReg)
-      )];
+      const rankings = [
+        ...this.rankings.filter(
+          (r) =>
+            r.rankingKey.general !== this.seasonRanking &&
+            (!this.showOnlyRegs || r.sessionsCount >= this.sessionsCountToBeReg)
+        ),
+      ];
       rankings.sort((r1, r2) => r2.total - r1.total);
       return rankings.map((r, i) => {
-          return {
-            total: r.total,
-            rank: i + 1,
-            playerId: r.player.playerId,
-            playerName: r.player.firstName,
-            sessionsCount: r.sessionsCount,
-            isActive: r.player.playerId === this.activePlayerId,
-            isPresent: this.activePlayerIds && this.activePlayerIds.includes(r.player.playerId),
-          }
+        return {
+          total: r.total,
+          rank: i + 1,
+          playerId: r.player.playerId,
+          playerName: r.player.firstName,
+          sessionsCount: r.sessionsCount,
+          isActive: r.player.playerId === this.activePlayerId,
+          isPresent:
+            this.activePlayerIds &&
+            this.activePlayerIds.includes(r.player.playerId),
+        };
       });
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
-
 </style>

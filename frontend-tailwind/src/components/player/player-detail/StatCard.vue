@@ -1,23 +1,30 @@
-<template lang="pug">
-  div(class="bg-white overflow-hidden shadow rounded-lg")
-    div(class="px-4 py-5 sm:p-6")
-      div(class="flex items-center")
-        div(class="flex-shrink-0 rounded-md p-3" :class="colorClass ? colorClass : 'bg-indigo-500'")
-          slot
-        div(class="ml-5 w-0 flex-1")
-          dt(class="text-sm font-medium text-gray-500 truncate") {{label}}
-          dd(class="flex items-center space-x-3")
-            div(class="text-2xl font-semibold text-gray-900") {{stat}}
-            result-badge(v-if="change" :player-result="change")
+<template>
+  <div class="overflow-hidden bg-white rounded-lg shadow">
+    <div class="px-4 py-5 sm:p-6">
+      <div class="flex items-center">
+        <div
+          class="flex-shrink-0 p-3 rounded-md"
+          :class="colorClass ? colorClass : 'bg-indigo-500'"
+        >
+          <slot></slot>
+        </div>
+        <div class="flex-1 w-0 ml-5">
+          <dt class="text-sm font-medium text-gray-500 truncate">
+            {{ label }}
+          </dt>
+          <dd class="flex items-center space-x-3">
+            <div class="text-2xl font-semibold text-gray-900">{{ stat }}</div>
+            <result-badge v-if="change" :player-result="change"></result-badge>
+          </dd>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
   name: "StatCard",
-  props: ["label", "stat", "change", "colorClass"]
-}
+  props: ["label", "stat", "change", "colorClass"],
+};
 </script>
-
-<style scoped>
-
-</style>
