@@ -1,11 +1,12 @@
 <template>
   <div class="overflow-hidden bg-white shadow sm:rounded-md">
-    <ul>
-      <li
-        v-for="(player, index) in players"
-        :key="player.playerId"
-        :class="index &gt; 0 ? 'border-t border-gray-200' : ''"
-      >
+    <ul v-if="loading">
+      <li>
+        <player-list-item loading="true"></player-list-item>
+      </li>
+    </ul>
+    <ul v-if="!loading" class="divide-y divide-gray-200">
+      <li v-for="player in players" :key="player.playerId">
         <player-list-item :player="player"></player-list-item>
       </li>
     </ul>
@@ -25,12 +26,14 @@ export default {
         label: "Joueur",
       },
     ],
+    loading: false,
   }),
-  mounted() {
-    PlayerService.getPlayers().then((response) => {
-      this.players = response.data;
-      this.$store.commit("setPageTitle", this.players.length + " joueurs");
-    });
+  async mounted() {
+    this.loading = true;
+    const response = await PlayerService.getPlayers();
+    this.players = response.data;
+    this.$store.commit("setPageTitle", this.players.length + " joueurs");
+    this.loading = false;
   },
   methods: {},
 };

@@ -1,11 +1,22 @@
 <template>
-  <ul
-    class="grid grid-cols-1 gap-5 mt-2 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3"
-  >
-    <li v-for="session in sessions" :key="session.sessionId">
-      <session-list-item :session="session"></session-list-item>
-    </li>
-  </ul>
+  <div>
+    <ul
+      class="grid grid-cols-1 gap-5 mt-2 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      v-if="loading"
+    >
+      <li v-for="i in [0, 1, 2, 3, 4, 5]" :key="i">
+        <session-list-item :loading="true"></session-list-item>
+      </li>
+    </ul>
+    <ul
+      class="grid grid-cols-1 gap-5 mt-2 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      v-if="!loading"
+    >
+      <li v-for="session in sessions" :key="session.sessionId">
+        <session-list-item :session="session"></session-list-item>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -18,6 +29,7 @@ export default {
   name: "poker-sessions",
   components: { SessionListItem },
   data: () => ({
+    loading: false,
     sessions: [],
     cols: [
       {
@@ -55,6 +67,7 @@ export default {
     ],
   }),
   async mounted() {
+    this.loading = true;
     const response = await SessionService.getSessions();
     this.sessions = response.data;
     this.sessions = this.sessions.sort(
@@ -70,6 +83,7 @@ export default {
         { result: Number.MAX_VALUE }
       );
     });
+    this.loading = false;
     this.$store.commit("setPageTitle", this.sessions.length + " sessions");
     //this.sessions.sort((s1, s2) => s2.compareTo(s2));
   },

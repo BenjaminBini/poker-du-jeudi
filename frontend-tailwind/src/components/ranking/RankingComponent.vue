@@ -1,16 +1,19 @@
 <template>
   <div
-    class="flex flex-col overflow-hidden border-gray-200 shadow sm:rounded-lg"
+    class="flex flex-col overflow-hidden divide-y divide-gray-200 shadow sm:rounded-lg"
   >
     <div
-      class="p-2 pl-3 font-bold tracking-wide text-center text-indigo-500 bg-white text-l"
+      class="p-2 pl-3 font-bold tracking-wide text-center text-indigo-600 bg-white text-l"
     >
       <h2>{{ title }}</h2>
     </div>
-    <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-        <div class="overflow-hidden border-t border-b border-gray-200">
-          <nav class="flex justify-between -space-x-px bg-white">
+    <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full align-middle sm:px-6 lg:px-8">
+        <div class="overflow-hidden divide-y divide-gray-200">
+          <nav
+            v-if="!loading && enoughDataToShowOnlyRegs"
+            class="flex justify-between -space-x-px bg-white"
+          >
             <div class="flex items-center w-full justify-evenly">
               <button
                 class="flex items-center justify-center w-1/2 py-2 focus:outline-none"
@@ -38,7 +41,13 @@
               </button>
             </div>
           </nav>
-          <table class="min-w-full border-t divide-y divide-gray-200">
+          <div
+            v-if="loading"
+            class="flex items-center justify-center py-6 bg-white"
+          >
+            <tw-spinner></tw-spinner>
+          </div>
+          <table v-if="!loading" class="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
                 <th
@@ -84,7 +93,7 @@
                   {{ row.rank }}
                 </td>
                 <td
-                  class="px-0 py-3 text-sm font-medium text-indigo-600 whitespace-nowrap"
+                  class="inline-flex items-center px-0 py-3 text-sm font-medium text-indigo-600 whitespace-nowrap"
                   v-if="!row.isActive"
                 >
                   <router-link :to="'/players/' + row.playerId">{{
@@ -124,6 +133,7 @@
 
 <script>
 import { UserGroupIcon, UsersIcon } from "@vue-hero-icons/solid";
+import settings from "@/settings";
 
 export default {
   name: "RankingComponent",
@@ -134,6 +144,7 @@ export default {
     "activePlayerIds",
     "seasonRanking",
     "title",
+    "loading",
   ],
   components: {
     UserGroupIcon,
@@ -148,7 +159,33 @@ export default {
     },
   },
   computed: {
+    regsRanking: function () {
+      if (!Array.isArray(this.rankings)) return [];
+      if (this.seasonRanking) {
+        return this.rankings.filter(
+          (r) =>
+            !r.rankingKey.general &&
+            r.sessionsCount >= settings.regPlayerMinimumSeasonSessionCount
+        );
+      } else {
+        return this.rankings.filter(
+          (r) =>
+            r.rankingKey.general &&
+            r.sessionsCount >= settings.regPlayerMinimumGeneralSessionCount
+        );
+      }
+    },
+    allRanking: function () {
+      if (!Array.isArray(this.rankings)) return [];
+      return this.rankings.filter(
+        (r) => this.seasonRanking !== r.rankingKey.general
+      );
+    },
+    enoughDataToShowOnlyRegs: function () {
+      return this.regsRanking.length > 0;
+    },
     showOnlyRegs: function () {
+      if (!this.enoughDataToShowOnlyRegs) return false;
       if (this.forceShowReg !== undefined) return this.forceShowReg;
       if (!Array.isArray(this.rankings)) return true;
       const activePlayerRanking = this.rankings.find(
@@ -162,17 +199,15 @@ export default {
       );
     },
     sessionsCountToBeReg: function () {
-      return this.seasonRanking ? 5 : 15;
+      return this.seasonRanking
+        ? settings.regPlayerMinimumSeasonSessionCount
+        : settings.regPlayerMinimumGeneralSessionCount;
     },
     table: function () {
       if (!Array.isArray(this.rankings)) return [];
-      const rankings = [
-        ...this.rankings.filter(
-          (r) =>
-            r.rankingKey.general !== this.seasonRanking &&
-            (!this.showOnlyRegs || r.sessionsCount >= this.sessionsCountToBeReg)
-        ),
-      ];
+      const rankings = this.showOnlyRegs
+        ? [...this.regsRanking]
+        : [...this.allRanking];
       rankings.sort((r1, r2) => r2.total - r1.total);
       return rankings.map((r, i) => {
         return {

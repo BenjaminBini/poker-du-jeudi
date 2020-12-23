@@ -1,70 +1,86 @@
 <template>
-  <div v-if="loaded">
+  <div>
     <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      <StatCard
+      <stat-card
         label="Vainqueur"
-        :stat="results[0].player.firstName"
-        :change="results[0]"
+        :loading="loading"
+        :stat="!loading ? results[0].player.firstName : ''"
+        :change="!loading ? results[0] : ''"
         color-class="bg-green-500"
       >
         <StarIcon class="w-6 h-6 text-white"></StarIcon>
-      </StatCard>
-      <StatCard
+      </stat-card>
+      <stat-card
         label="Perdant"
-        :stat="results[results.length - 1].player.firstName"
-        :change="results[results.length - 1]"
+        :loading="loading"
+        :stat="!loading ? results[results.length - 1].player.firstName : ''"
+        :change="!loading ? results[results.length - 1] : ''"
         color-class="bg-red-500"
       >
         <ChevronDoubleDownIcon
           class="w-6 h-6 text-white"
         ></ChevronDoubleDownIcon>
-      </StatCard>
-      <StatCard
+      </stat-card>
+      <stat-card
         label="Lieu"
-        :stat="session.place.name"
+        :loading="loading"
+        :stat="!loading ? session.place.name : ''"
         color-class="bg-green-500"
       >
         <HomeIcon class="w-6 h-6 text-white"></HomeIcon>
-      </StatCard>
-      <StatCard
-        v-if="results[0].buyIns > 0"
+      </stat-card>
+      <stat-card
         label="Argent misé"
-        :stat="results.map((r) => r.buyIns).reduce((a, b) => a + b) * 10 + ' €'"
+        v-if="loading || results[0].buyIns > 0"
+        :loading="loading"
+        :stat="
+          !loading
+            ? results.map((r) => r.buyIns).reduce((a, b) => a + b) * 10 + ' €'
+            : ''
+        "
         color-class="bg-green-500"
       >
         <CashIcon class="w-6 h-6 text-white"></CashIcon>
-      </StatCard>
+      </stat-card>
     </dl>
-    <div
-      class="overflow-hidden bg-white divide-y divide-gray-200 rounded-lg shadow mt-14"
-    >
-      <h3 class="px-4 py-5 text-xl font-bold leading-6 text-indigo-500">
-        Résultat de la session
-      </h3>
-      <div class="px-4 py-5 sm:p-6">Test</div>
-    </div>
-    <dl class="grid grid-cols-1 gap-5 mt-14 sm:grid-cols-2 lg:grid-cols-4">
-      <div>
+    <div class="grid grid-cols-1 gap-5 mt-14 sm:grid-cols-4">
+      <div class="sm:col-span-4 lg:col-span-2">
+        <tailwind-card title="Résultat de la session">
+          <session-result-chart-container
+            :loading="loading"
+            :results="session.playerResults"
+          ></session-result-chart-container>
+        </tailwind-card>
+      </div>
+      <div class="sm:col-span-2 lg:col-span-1">
+        <session-result-ranking
+          :loading="loading"
+          :results="session.playerResults"
+          title="Classement de la session"
+        ></session-result-ranking>
+      </div>
+      <div class="sm:col-span-2 lg:col-span-1">
         <RankingComponent
-          :rankings="session.rankings.filter((r) => !r.rankingKey.general)"
+          :loading="loading"
+          :rankings="
+            !loading
+              ? session.rankings.filter((r) => !r.rankingKey.general)
+              : []
+          "
           :active-player-ids="
-            session.playerResults.map((pr) => pr.player.playerId)
+            !loading
+              ? session.playerResults.map((pr) => pr.player.playerId)
+              : []
           "
           :season-ranking="true"
-          :title="`Classement ${session.season.name}`"
-        ></RankingComponent>
-      </div>
-      <div>
-        <RankingComponent
-          :rankings="session.rankings.filter((r) => r.rankingKey.general)"
-          :active-player-ids="
-            session.playerResults.map((pr) => pr.player.playerId)
+          :title="
+            !loading
+              ? `Classement ${session.season.name}`
+              : 'Classement de la saison'
           "
-          :season-ranking="false"
-          title="Classement général"
         ></RankingComponent>
       </div>
-    </dl>
+    </div>
   </div>
 </template>
 
@@ -80,6 +96,9 @@ import {
   StarIcon,
 } from "@vue-hero-icons/outline";
 import RankingComponent from "@/components/ranking/RankingComponent";
+import TailwindCard from "@/components/ui/TailwindCard.vue";
+import SessionResultChartContainer from "./SessionResultChartContainer.vue";
+import SessionResultRanking from "@/components/session/SessionResultRanking.vue";
 
 export default {
   name: "Session",
@@ -90,22 +109,29 @@ export default {
     RankingComponent,
     StarIcon,
     StatCard,
+    TailwindCard,
+    SessionResultChartContainer,
+    SessionResultRanking,
   },
   data: () => ({
     session: Object,
     formattedDate: String,
-    loaded: false,
+    loading: true,
   }),
   computed: {
     results: function () {
-      if (!this.session) return [];
+      if (this.loading) return [];
       return [...this.session.playerResults].sort(
         (r1, r2) => r2.result - r1.result
       );
     },
   },
+  watch: {
+    $route: "fetchData",
+  },
   methods: {
     async fetchData() {
+      this.loading = true;
       let sessionId = this.$route.params.id;
       const response = await SessionService.getSession(sessionId);
       this.session = response.data;
@@ -115,7 +141,28 @@ export default {
         { locale: fr }
       );
       this.$store.commit("setPageTitle", "Session du " + this.formattedDate);
-      this.loaded = true;
+
+      let actions = [];
+      if (this.session.previousSession) {
+        actions = [
+          ...actions,
+          {
+            target: `/sessions/${this.session.previousSession.sessionId}`,
+            label: "Session précédente",
+          },
+        ];
+      }
+      if (this.session.nextSession) {
+        actions = [
+          ...actions,
+          {
+            target: `/sessions/${this.session.nextSession.sessionId}`,
+            label: "Session suivante",
+          },
+        ];
+      }
+      this.$store.commit("setPageActions", actions);
+      this.loading = false;
     },
   },
   mounted() {

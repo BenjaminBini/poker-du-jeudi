@@ -200,9 +200,10 @@ Menu open: "block", Menu closed: "hidden"-->
         </div>
       </nav>
       <header class="py-10">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <h1 class="text-3xl font-bold text-white">{{ pageTitle }}</h1>
-        </div>
+        <custom-heading
+          :page-title="pageTitle"
+          :page-actions="pageActions"
+        ></custom-heading>
       </header>
     </div>
     <main class="-mt-32">
@@ -216,8 +217,13 @@ Menu open: "block", Menu closed: "hidden"-->
 </template>
 
 <script>
+import CustomHeading from "@/components/CustomHeading";
+
 export default {
   name: "main-template",
+  components: {
+    CustomHeading,
+  },
   props: {
     routes: Array,
   },
@@ -227,6 +233,9 @@ export default {
   computed: {
     pageTitle() {
       return this.$store.state.pageTitle;
+    },
+    pageActions() {
+      return this.$store.state.pageActions;
     },
   },
 };

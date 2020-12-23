@@ -1,7 +1,10 @@
 <template>
   <div class="overflow-hidden bg-white rounded-lg shadow">
     <div class="px-4 py-5 sm:p-6">
-      <div class="flex items-center">
+      <div v-if="loading" class="flex justify-center py-4">
+        <tw-spinner></tw-spinner>
+      </div>
+      <div v-if="!loading" class="flex items-center">
         <div
           class="flex-shrink-0 p-3 rounded-md"
           :class="colorClass ? colorClass : 'bg-indigo-500'"
@@ -25,6 +28,6 @@
 <script>
 export default {
   name: "StatCard",
-  props: ["label", "stat", "change", "colorClass"],
+  props: ["label", "stat", "change", "colorClass", "loading"],
 };
 </script>

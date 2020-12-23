@@ -1,8 +1,9 @@
 <template>
-  <div v-if="loaded">
+  <div>
     <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard
         label="Résultat total"
+        :loading="playerLoading"
         :stat="playerTotalResult + '€'"
         :change="lastSessionResult"
         :color-class="playerTotalResult >= 0 ? 'bg-green-500' : 'bg-red-500'"
@@ -13,6 +14,7 @@
         :label="
           'Résultat de ' + (selectedYear === 0 ? yearsPlayed[0] : selectedYear)
         "
+        :loading="playerLoading"
         :stat="currentSeasonResult + '€'"
         :color-class="currentSeasonResult >= 0 ? 'bg-green-500' : 'bg-red-500'"
       >
@@ -22,13 +24,15 @@
       </StatCard>
       <StatCard
         label="Participations"
-        :stat="player.playerResults.length"
+        :loading="playerLoading"
+        :stat="player.playerResults ? player.playerResults.length : ''"
         color-class="bg-green-500"
       >
         <CalendarIcon class="w-6 h-6 text-white"></CalendarIcon>
       </StatCard>
       <StatCard
         label="Premières places"
+        :loading="playerLoading"
         :stat="firstPlaces"
         color-class="bg-green-500"
       >
@@ -40,6 +44,7 @@
     >
       <StatCard
         label="Meilleure session"
+        :loading="playerLoading"
         :stat="bestResult + '€'"
         color-class="bg-green-500"
       >
@@ -47,6 +52,7 @@
       </StatCard>
       <StatCard
         label="Pire session"
+        :loading="playerLoading"
         :stat="worstResult + '€'"
         color-class="bg-red-500"
       >
@@ -56,13 +62,21 @@
       </StatCard>
       <StatCard
         label="Sessions positives"
-        :stat="positiveSessions"
+        :loading="playerLoading"
+        :stat="
+          this.player.playerResults
+            ? `${positiveSessions} (${Math.ceil(
+                (positiveSessions / player.playerResults.length) * 100
+              )}%)`
+            : ''
+        "
         color-class="bg-green-500"
       >
         <TrendingUpIcon class="w-6 h-6 text-white"></TrendingUpIcon>
       </StatCard>
       <StatCard
         label="Dernières places"
+        :loading="playerLoading"
         :stat="lastPlaces"
         color-class="bg-red-500"
       >
@@ -73,6 +87,7 @@
     </dl>
     <ResultChartContainer
       class="mt-7"
+      :loading="playerLoading"
       :results="player.playerResults"
       :selected-year="selectedYear"
       :years-played="yearsPlayed"
@@ -87,13 +102,22 @@
             >&nbsp;en {{ selectedYear }}</span
           >
         </h2>
-        <ul class="grid grid-cols-1 gap-5 mt-6 sm:gap-6 sm:grid-cols-2">
+        <div
+          class="grid grid-cols-1 gap-5 mt-6 sm:gap-6 sm:grid-cols-2"
+          v-if="playerLoading"
+        >
+          <PlayerSessionCard loading="true"></PlayerSessionCard>
+        </div>
+        <div
+          class="grid grid-cols-1 gap-5 mt-6 sm:gap-6 sm:grid-cols-2"
+          v-if="!playerLoading"
+        >
           <PlayerSessionCard
             v-for="result in filteredYears"
             :result="result"
             :key="result.session.sessionId"
           ></PlayerSessionCard>
-        </ul>
+        </div>
       </div>
       <div class="w-1/2">
         <h2
@@ -104,6 +128,7 @@
         <div class="flex space-x-8">
           <div class="w-1/2">
             <RankingComponent
+              :loading="generalRankingsLoading"
               :rankings="generalRankings"
               :previous-rankings="previousRankings"
               :active-player-id="player.playerId"
@@ -113,6 +138,7 @@
           </div>
           <div class="w-1/2">
             <RankingComponent
+              :loading="seasonRankingsLoading"
               :rankings="rankings"
               :previous-rankings="previousRankings"
               :active-player-id="player.playerId"
@@ -138,6 +164,7 @@ import {
   LightningBoltIcon,
   PresentationChartLineIcon,
   ShieldExclamationIcon,
+  TrendingUpIcon,
 } from "@vue-hero-icons/outline";
 import { AcademicCapIcon } from "@vue-hero-icons/solid";
 import ResultChartContainer from "./ResultChartContainer";
@@ -159,10 +186,12 @@ export default {
     PresentationChartLineIcon,
     ShieldExclamationIcon,
     StatCard,
+    TrendingUpIcon,
   },
   data: () => ({
     player: Object,
-    loaded: false,
+    playerLoading: false,
+    rankingLoading: false,
     selectedYear: 0,
     yearsPlayed: [],
     rankings: Array,
@@ -171,6 +200,7 @@ export default {
   }),
   computed: {
     filteredYears: function () {
+      if (!this.player.playerResults) return [];
       return [...this.player.playerResults]
         .filter(
           (r) =>
@@ -188,6 +218,7 @@ export default {
       return 0;
     },
     currentSeasonResult: function () {
+      if (!this.player.playerResults) return [];
       let currentYear = this.selectedYear;
       if (currentYear === 0) {
         currentYear = this.yearsPlayed[0];
@@ -198,7 +229,7 @@ export default {
         .reduce((acc, curr) => acc + curr, 0);
     },
     lastSessionResult: function () {
-      if (this.player.playerResults.length > 0) {
+      if (this.player.playerResults && this.player.playerResults.length > 0) {
         let results = [...this.player.playerResults];
         return results.sort(
           (r1, r2) => new Date(r2.session.date) - new Date(r1.session.date)
@@ -207,20 +238,25 @@ export default {
       return undefined;
     },
     firstPlaces: function () {
+      if (!this.player.playerResults) return 0;
       return this.player.playerResults.filter((pr) => pr.rank === 1).length;
     },
     lastPlaces: function () {
+      if (!this.player.playerResults) return 0;
       return this.player.playerResults.filter((pr) => pr.last).length;
     },
     positiveSessions: function () {
+      if (!this.player.playerResults) return 0;
       return this.player.playerResults.filter((pr) => pr.result >= 0).length;
     },
     bestResult: function () {
+      if (!this.player.playerResults) return 0;
       return this.player.playerResults
         .map((pr) => pr.result)
         .reduce((acc, cur) => (cur > acc ? cur : acc), -9999);
     },
     worstResult: function () {
+      if (!this.player.playerResults) return 0;
       return this.player.playerResults
         .map((pr) => pr.result)
         .reduce((acc, cur) => (cur < acc ? cur : acc), 9999);
@@ -228,36 +264,44 @@ export default {
   },
   watch: {
     $route: "fetchPlayerData",
-    selectedYear: "fetchRankingData",
+    selectedYear: "fetchSeasonRanking",
   },
   methods: {
-    fetchPlayerData() {
+    async fetchPlayerData() {
+      this.playerLoading = true;
+      this.generalRankingsLoading = true;
+      this.seasonRankingsLoading = true;
       let playerId = this.$route.params.id;
-      PlayerService.getPlayer(playerId).then((response) => {
-        this.player = response.data;
-        this.$store.commit("setPageTitle", this.player.firstName);
-        const setOfYears = new Set(
-          this.player.playerResults.map((pr) => pr.session.season.year)
-        );
-        this.yearsPlayed = [...setOfYears].sort((y1, y2) => y2 - y1);
-        this.selectedYear = [...this.yearsPlayed][0];
-        this.loaded = true;
-        this.fetchRankingData();
-      });
+      const response = await PlayerService.getPlayer(playerId);
+      this.player = response.data;
+      this.$store.commit("setPageTitle", this.player.firstName);
+      const setOfYears = new Set(
+        this.player.playerResults.map((pr) => pr.session.season.year)
+      );
+      this.yearsPlayed = [...setOfYears].sort((y1, y2) => y2 - y1);
+      this.selectedYear = [...this.yearsPlayed][0];
+      this.playerLoading = false;
+      this.fetchGeneralRanking();
+      this.fetchSeasonRanking();
     },
-    fetchRankingData() {
+    async fetchGeneralRanking() {
+      this.generalRankingsLoading = true;
+      const latestSessionResponse = await SessionService.getLatestSession();
+      this.generalRankings = [...latestSessionResponse.data.rankings];
+      this.generalRankingsLoading = false;
+    },
+    async fetchSeasonRanking() {
+      this.seasonRankingsLoading = true;
       this.rankings = [];
-      SessionService.getLatestSessionByYear(
+      const latestSessionByYearResponse = await SessionService.getLatestSessionByYear(
         this.selectedYear === 0 ? this.yearsPlayed[0] : this.selectedYear
-      ).then((response) => {
-        this.rankings = response.data.rankings;
-        if (response.data.previousSession) {
-          this.previousRankings = response.data.previousSession.rankings;
-        }
-      });
-      SessionService.getLatestSession().then((response) => {
-        this.generalRankings = [...response.data.rankings];
-      });
+      );
+      this.rankings = latestSessionByYearResponse.data.rankings;
+      if (latestSessionByYearResponse.data.previousSession) {
+        this.previousRankings =
+          latestSessionByYearResponse.data.previousSession.rankings;
+      }
+      this.seasonRankingsLoading = false;
     },
     yearSelected(event, year) {
       this.selectedYear = year;

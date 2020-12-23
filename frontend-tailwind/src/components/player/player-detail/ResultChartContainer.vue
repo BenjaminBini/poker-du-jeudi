@@ -1,14 +1,13 @@
 <template>
   <div
     class="overflow-hidden bg-white divide-y divide-gray-200 rounded-lg shadow"
-    v-if="results.length > 1"
   >
     <div class="px-4 py-5 bg-white sm:px-6">
       <div
         class="flex flex-wrap items-center justify-between -mt-2 -ml-4 sm:flex-nowrap"
       >
         <div class="mt-2 ml-4">
-          <h3 class="text-xl font-bold leading-6 text-indigo-500">Résultats</h3>
+          <h3 class="text-xl font-bold leading-6 text-indigo-600">Résultats</h3>
         </div>
         <div
           class="flex-shrink-0 mt-2 ml-4 space-x-3"
@@ -34,10 +33,17 @@
       <!-- We use less vertical padding on card headers on desktop than on body sections-->
     </div>
     <div class="px-4 py-5 sm:p-6">
+      <div
+        v-if="loading"
+        class="flex items-center justify-center py-48 bg-white"
+      >
+        <tw-spinner></tw-spinner>
+      </div>
       <ResultChart
+        v-if="!loading"
         class="relative"
         :results="filteredResults"
-        style="height: 400px"
+        style="height: 404px"
       ></ResultChart>
     </div>
   </div>
@@ -53,10 +59,11 @@ export default {
     YearFilter,
     ResultChart,
   },
-  props: ["results", "yearsPlayed", "selectedYear"],
+  props: ["results", "yearsPlayed", "selectedYear", "loading"],
   data: () => ({}),
   computed: {
     filteredResults: function () {
+      if (!this.results || this.results.length === 0) return [];
       let results = [...this.results];
       return results
         .sort((r1, r2) => new Date(r2.session.date) - new Date(r1.session.date))
