@@ -4,7 +4,35 @@
       class="grid grid-cols-1 gap-5 mt-2 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3"
       v-if="loading"
     >
-      <li v-for="i in [0, 1, 2, 3, 4, 5]" :key="i">
+      <li
+        v-for="i in [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          22,
+          23,
+          24,
+        ]"
+        :key="i"
+      >
         <session-list-item :loading="true"></session-list-item>
       </li>
     </ul>
