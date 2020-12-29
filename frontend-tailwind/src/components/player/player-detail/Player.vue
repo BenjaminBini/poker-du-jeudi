@@ -197,6 +197,8 @@ export default {
     rankings: Array,
     generalRankings: Array,
     previousRankings: Array,
+    generalRankingsLoading: false,
+    seasonRankingsLoading: false,
   }),
   computed: {
     filteredYears: function () {

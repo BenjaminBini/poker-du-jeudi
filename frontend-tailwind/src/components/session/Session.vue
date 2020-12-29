@@ -58,6 +58,19 @@
           :results="session.playerResults"
           title="Classement de la session"
         ></session-result-ranking>
+        <tailwind-button
+          class="flex flex-col items-stretch mt-4"
+          type="primary"
+          size="sm"
+          @buttonClick="openAddPlayerDialog()"
+        >
+          Ajouter un joueur
+        </tailwind-button>
+        <add-player-panel
+          :is-open="addPlayerDialogOpened"
+          @close="addPlayerDialogOpened = false"
+          :player-list="playerList"
+        ></add-player-panel>
       </div>
       <div class="sm:col-span-2 lg:col-span-1">
         <RankingComponent
@@ -86,6 +99,7 @@
 
 <script>
 import SessionService from "../../services/session-service";
+import PlayerService from "../../services/player-service";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import StatCard from "@/components/player/player-detail/StatCard";
@@ -99,10 +113,13 @@ import RankingComponent from "@/components/ranking/RankingComponent";
 import TailwindCard from "@/components/ui/TailwindCard.vue";
 import SessionResultChartContainer from "./SessionResultChartContainer.vue";
 import SessionResultRanking from "@/components/session/SessionResultRanking.vue";
+import TailwindButton from "@/components/ui/TailwindButton";
+import AddPlayerPanel from "@/components/session/AddPlayerPanel";
 
 export default {
   name: "Session",
   components: {
+    AddPlayerPanel,
     CashIcon,
     ChevronDoubleDownIcon,
     HomeIcon,
@@ -112,11 +129,15 @@ export default {
     TailwindCard,
     SessionResultChartContainer,
     SessionResultRanking,
+    TailwindButton,
   },
   data: () => ({
     session: Object,
     formattedDate: String,
     loading: true,
+    playerListLoading: true,
+    addPlayerDialogOpened: false,
+    playerList: [],
   }),
   computed: {
     results: function () {
@@ -164,9 +185,18 @@ export default {
       this.$store.commit("setPageActions", actions);
       this.loading = false;
     },
+    fetchPlayerList: async function () {
+      this.playerListLoading = true;
+      const response = await PlayerService.getPlayers();
+      this.playerList = response.data;
+    },
+    openAddPlayerDialog: function () {
+      this.addPlayerDialogOpened = true;
+    },
   },
   mounted() {
     this.fetchData();
+    this.fetchPlayerList();
   },
 };
 </script>
