@@ -95,11 +95,13 @@ export default {
     },
   },
   mounted() {
-    this.formattedDate = format(
-      new Date(this.session.date),
-      "EEEE d MMMM yyyy",
-      { locale: fr }
-    );
+    if (this.session) {
+      this.formattedDate = format(
+        new Date(this.session.date),
+        "EEEE d MMMM yyyy",
+        { locale: fr }
+      );
+    }
   },
 };
 </script>

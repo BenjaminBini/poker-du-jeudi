@@ -6,7 +6,7 @@
     :class="
       selectedYear === year
         ? 'text-white bg-indigo-500'
-        : 'bg-transparent border-indigo-500 text-indigo-500 text-gray-500'
+        : 'bg-transparent border-indigo-500 text-indigo-500'
     "
   >
     {{ label }}

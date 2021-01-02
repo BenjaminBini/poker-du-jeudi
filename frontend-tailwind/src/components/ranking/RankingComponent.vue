@@ -72,7 +72,7 @@
                   class="px-0 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase bg-white"
                   scope="col"
                 >
-                  Total
+                  Résultat
                 </th>
               </tr>
             </thead>
@@ -93,16 +93,18 @@
                   {{ row.rank }}
                 </td>
                 <td
-                  class="inline-flex items-center px-0 py-3 text-sm font-medium text-indigo-600 whitespace-nowrap"
+                  class="px-0 py-3 text-sm font-medium text-indigo-600 whitespace-nowrap"
                   v-if="!row.isActive"
                 >
-                  <router-link :to="'/players/' + row.playerId">{{
-                    row.playerName
-                  }}</router-link
-                  ><span
-                    class="inline-block w-2 h-2 ml-2 bg-green-600 rounded-lg"
-                    v-if="row.isPresent"
-                  ></span>
+                  <div class="inline-flex items-center">
+                    <router-link :to="'/players/' + row.playerId">{{
+                      row.playerName
+                    }}</router-link
+                    ><span
+                      class="inline-block w-2 h-2 ml-2 bg-green-600 rounded-lg"
+                      v-if="row.isPresent"
+                    ></span>
+                  </div>
                 </td>
                 <td
                   class="px-0 py-3 text-sm font-medium text-white whitespace-nowrap"
@@ -117,10 +119,17 @@
                   {{ row.sessionsCount }}
                 </td>
                 <td
-                  class="px-0 py-3 text-sm whitespace-nowrap"
+                  class="px-0 py-2 text-sm whitespace-nowrap"
                   :class="row.isActive ? 'text-white' : 'text-gray-900'"
                 >
-                  {{ row.total }} €
+                  <span
+                    class="inline-flex items-center flex-shrink h-6 px-2 text-white rounded-md"
+                    :class="{
+                      'bg-red-500': row.total < 0,
+                      'bg-green-500': row.total >= 0,
+                    }"
+                    >{{ row.total }} €</span
+                  >
                 </td>
               </tr>
             </tbody>

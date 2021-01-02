@@ -18,6 +18,12 @@
           <dd class="flex items-center space-x-3">
             <div class="text-2xl font-semibold text-gray-900">{{ stat }}</div>
             <result-badge v-if="change" :player-result="change"></result-badge>
+            <div
+              v-if="neutralBadge"
+              class="badge mr-1 flex flex-shrink-0 items-baseline rounded-full text-sm font-medium leading-5 px-2.5 py-0.5 bg-indigo-500 text-white"
+            >
+              {{ neutralBadge }}
+            </div>
           </dd>
         </div>
       </div>
@@ -28,6 +34,6 @@
 <script>
 export default {
   name: "StatCard",
-  props: ["label", "stat", "change", "colorClass", "loading"],
+  props: ["label", "stat", "change", "colorClass", "loading", "neutralBadge"],
 };
 </script>

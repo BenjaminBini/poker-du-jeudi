@@ -43,8 +43,11 @@
         <CashIcon class="w-6 h-6 text-white"></CashIcon>
       </stat-card>
     </dl>
-    <div class="grid grid-cols-1 gap-5 mt-14 sm:grid-cols-4">
-      <div class="sm:col-span-4 lg:col-span-2">
+    <div class="grid grid-cols-12 gap-5 mt-14">
+      <div
+        class="col-span-12"
+        :class="showEditControls ? 'lg:col-span-5' : 'lg:col-span-6'"
+      >
         <tailwind-card title="Résultat de la session">
           <session-result-chart-container
             :loading="loading"
@@ -52,28 +55,40 @@
           ></session-result-chart-container>
         </tailwind-card>
       </div>
-      <div class="sm:col-span-2 lg:col-span-1">
+      <div
+        class="col-span-12 md:col-span-6"
+        :class="showEditControls ? 'lg:col-span-4' : 'lg:col-span-3'"
+      >
         <session-result-ranking
           :loading="loading"
+          :loading-player-results="loadingPlayerResults"
+          :loading-player-buy-ins="loadingPlayerBuyIns"
+          :loadingPlayersToDelete="loadingPlayersToDelete"
           :results="session.playerResults"
           title="Classement de la session"
+          @edit-result="editResult"
+          @delete-result="deleteResult"
         ></session-result-ranking>
         <tailwind-button
+          v-if="showEditControls"
           class="flex flex-col items-stretch mt-4"
           type="primary"
           size="sm"
           @buttonClick="openAddPlayerDialog()"
         >
-          Ajouter un joueur
+          <plus-icon class="w-5 h-5"></plus-icon>
+          <span class="pl-1">Ajouter un joueur</span>
         </tailwind-button>
         <add-player-panel
+          v-if="showEditControls"
           :is-open="addPlayerDialogOpened"
           @close="addPlayerDialogOpened = false"
-          :player-list="playerList"
+          @player-clicked="addPlayer"
+          :player-list="nonPlayingPlayers"
         ></add-player-panel>
       </div>
-      <div class="sm:col-span-2 lg:col-span-1">
-        <RankingComponent
+      <div class="col-span-12 md:col-span-6 lg:col-span-3">
+        <ranking-component
           :loading="loading"
           :rankings="
             !loading
@@ -91,7 +106,7 @@
               ? `Classement ${session.season.name}`
               : 'Classement de la saison'
           "
-        ></RankingComponent>
+        ></ranking-component>
       </div>
     </div>
   </div>
@@ -108,6 +123,7 @@ import {
   ChevronDoubleDownIcon,
   HomeIcon,
   StarIcon,
+  PlusIcon,
 } from "@vue-hero-icons/outline";
 import RankingComponent from "@/components/ranking/RankingComponent";
 import TailwindCard from "@/components/ui/TailwindCard.vue";
@@ -115,6 +131,7 @@ import SessionResultChartContainer from "./SessionResultChartContainer.vue";
 import SessionResultRanking from "@/components/session/SessionResultRanking.vue";
 import TailwindButton from "@/components/ui/TailwindButton";
 import AddPlayerPanel from "@/components/session/AddPlayerPanel";
+import settings from "@/settings";
 
 export default {
   name: "Session",
@@ -123,6 +140,7 @@ export default {
     CashIcon,
     ChevronDoubleDownIcon,
     HomeIcon,
+    PlusIcon,
     RankingComponent,
     StarIcon,
     StatCard,
@@ -137,13 +155,26 @@ export default {
     loading: true,
     playerListLoading: true,
     addPlayerDialogOpened: false,
+    editSessionPanelOpened: false,
     playerList: [],
+    showEditControls: false,
+    loadingPlayerResults: [],
+    loadingPlayerBuyIns: [],
+    loadingPlayersToDelete: [],
   }),
   computed: {
     results: function () {
       if (this.loading) return [];
       return [...this.session.playerResults].sort(
         (r1, r2) => r2.result - r1.result
+      );
+    },
+    nonPlayingPlayers: function () {
+      if (this.loading) return [];
+      return this.playerList.filter((p) =>
+        this.session.playerResults
+          .map((r) => r.player.playerId)
+          .every((id) => id !== p.playerId)
       );
     },
   },
@@ -193,10 +224,64 @@ export default {
     openAddPlayerDialog: function () {
       this.addPlayerDialogOpened = true;
     },
+    openEditSessionPanel: function () {
+      this.editSessionPanelOpened = true;
+    },
+    addPlayer: async function (event) {
+      const response = await SessionService.updatePlayerSessionResult(
+        this.session.sessionId,
+        event.playerId,
+        0,
+        1
+      );
+      this.session = response.data;
+      this.addPlayerDialogOpened = false;
+    },
+    deleteResult: async function (event) {
+      this.loadingPlayersToDelete.push(event.playerId);
+      const response = await SessionService.deletePlayerSessionResult(
+        this.session.sessionId,
+        event.playerId
+      );
+      this.session = response.data;
+      this.loadingPlayersToDelete = this.loadingPlayerResults.filter(
+        (id) => id != event.playerId
+      );
+    },
+    editResult: async function (event) {
+      switch (event.type) {
+        case "buy-ins":
+          this.loadingPlayerBuyIns.push(event.playerId);
+          break;
+        case "result":
+          this.loadingPlayerResults.push(event.playerId);
+          break;
+      }
+      const response = await SessionService.updatePlayerSessionResult(
+        this.session.sessionId,
+        event.playerId,
+        event.result,
+        event.buyIns
+      );
+      switch (event.type) {
+        case "buy-ins":
+          this.loadingPlayerBuyIns = this.loadingPlayerBuyIns.filter(
+            (id) => id != event.playerId
+          );
+          break;
+        case "result":
+          this.loadingPlayerResults = this.loadingPlayerResults.filter(
+            (id) => id != event.playerId
+          );
+          break;
+      }
+      this.session = response.data;
+    },
   },
   mounted() {
     this.fetchData();
     this.fetchPlayerList();
+    this.showEditControls = settings.forceEditMode;
   },
 };
 </script>

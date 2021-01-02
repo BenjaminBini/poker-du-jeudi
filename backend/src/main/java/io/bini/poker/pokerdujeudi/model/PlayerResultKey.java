@@ -12,6 +12,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlayerResultKey implements Serializable {
-    private int playerId;
-    private int sessionId;
+    private long playerId;
+    private long sessionId;
 }

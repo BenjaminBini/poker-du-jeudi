@@ -2,7 +2,7 @@
   <div class="overflow-hidden bg-white shadow sm:rounded-md">
     <ul v-if="loading">
       <li>
-        <player-list-item loading="true"></player-list-item>
+        <player-list-item :loading="true"></player-list-item>
       </li>
     </ul>
     <ul v-if="!loading" class="divide-y divide-gray-200">

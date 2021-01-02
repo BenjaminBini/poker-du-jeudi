@@ -11,12 +11,11 @@
         <CashIcon class="w-6 h-6 text-white"></CashIcon>
       </StatCard>
       <StatCard
-        :label="
-          'Résultat de ' + (selectedYear === 0 ? yearsPlayed[0] : selectedYear)
-        "
+        label="Résultat"
         :loading="playerLoading"
         :stat="currentSeasonResult + '€'"
         :color-class="currentSeasonResult >= 0 ? 'bg-green-500' : 'bg-red-500'"
+        :neutral-badge="selectedYear"
       >
         <PresentationChartLineIcon
           class="w-6 h-6 text-white"
@@ -25,16 +24,20 @@
       <StatCard
         label="Participations"
         :loading="playerLoading"
-        :stat="player.playerResults ? player.playerResults.length : ''"
+        :stat="filteredResults.length"
         color-class="bg-green-500"
+        :neutralBadge="selectedYear"
       >
         <CalendarIcon class="w-6 h-6 text-white"></CalendarIcon>
       </StatCard>
       <StatCard
         label="Premières places"
         :loading="playerLoading"
-        :stat="firstPlaces"
+        :stat="`${firstPlaces} (${Math.ceil(
+          (firstPlaces / filteredResults.length) * 100
+        )}%)`"
         color-class="bg-green-500"
+        :neutral-badge="selectedYear"
       >
         <AcademicCapIcon class="w-6 h-6 text-white"></AcademicCapIcon>
       </StatCard>
@@ -45,16 +48,18 @@
       <StatCard
         label="Meilleure session"
         :loading="playerLoading"
-        :stat="bestResult + '€'"
+        :stat="bestResult.result + '€'"
         color-class="bg-green-500"
+        :neutral-badge="bestResult.sessionDate"
       >
         <LightningBoltIcon class="w-6 h-6 text-white"></LightningBoltIcon>
       </StatCard>
       <StatCard
         label="Pire session"
         :loading="playerLoading"
-        :stat="worstResult + '€'"
+        :stat="worstResult.result + '€'"
         color-class="bg-red-500"
+        :neutral-badge="worstResult.sessionDate"
       >
         <ShieldExclamationIcon
           class="w-6 h-6 text-white"
@@ -66,10 +71,11 @@
         :stat="
           this.player.playerResults
             ? `${positiveSessions} (${Math.ceil(
-                (positiveSessions / player.playerResults.length) * 100
+                (positiveSessions / filteredResults.length) * 100
               )}%)`
             : ''
         "
+        :neutral-badge="selectedYear"
         color-class="bg-green-500"
       >
         <TrendingUpIcon class="w-6 h-6 text-white"></TrendingUpIcon>
@@ -77,8 +83,11 @@
       <StatCard
         label="Dernières places"
         :loading="playerLoading"
-        :stat="lastPlaces"
+        :stat="`${lastPlaces} (${Math.ceil(
+          (lastPlaces / filteredResults.length) * 100
+        )}%)`"
         color-class="bg-red-500"
+        :neutral-badge="selectedYear"
       >
         <ChevronDoubleDownIcon
           class="w-6 h-6 text-white"
@@ -106,7 +115,7 @@
           class="grid grid-cols-1 gap-5 mt-6 sm:gap-6 sm:grid-cols-2"
           v-if="playerLoading"
         >
-          <PlayerSessionCard loading="true"></PlayerSessionCard>
+          <PlayerSessionCard :loading="true"></PlayerSessionCard>
         </div>
         <div
           class="grid grid-cols-1 gap-5 mt-6 sm:gap-6 sm:grid-cols-2"
@@ -155,6 +164,8 @@
 </template>
 
 <script>
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import PlayerService from "../../../services/player-service";
 import SessionService from "../../../services/session-service";
 import {
@@ -201,6 +212,16 @@ export default {
     seasonRankingsLoading: false,
   }),
   computed: {
+    filteredResults: function () {
+      if (!this.player.playerResults) {
+        return [];
+      }
+      return this.player.playerResults.filter(
+        (pr) =>
+          pr.session.season.year === this.selectedYear ||
+          this.selectedYear === 0
+      );
+    },
     filteredYears: function () {
       if (!this.player.playerResults) return [];
       return [...this.player.playerResults]
@@ -241,27 +262,44 @@ export default {
     },
     firstPlaces: function () {
       if (!this.player.playerResults) return 0;
-      return this.player.playerResults.filter((pr) => pr.rank === 1).length;
+      return this.filteredResults.filter((pr) => pr.rank === 1).length;
     },
     lastPlaces: function () {
       if (!this.player.playerResults) return 0;
-      return this.player.playerResults.filter((pr) => pr.last).length;
+      return this.filteredResults.filter((pr) => pr.last).length;
     },
     positiveSessions: function () {
       if (!this.player.playerResults) return 0;
-      return this.player.playerResults.filter((pr) => pr.result >= 0).length;
+      return this.filteredResults.filter((pr) => pr.result >= 0).length;
     },
     bestResult: function () {
       if (!this.player.playerResults) return 0;
-      return this.player.playerResults
-        .map((pr) => pr.result)
-        .reduce((acc, cur) => (cur > acc ? cur : acc), -9999);
+      let bestResult = this.player.playerResults.reduce((acc, cur) =>
+        cur.result > acc.result ? cur : acc
+      );
+
+      bestResult.sessionDate = format(
+        new Date(bestResult.session.date),
+        "dd/MM/yyyy",
+        {
+          locale: fr,
+        }
+      );
+      return bestResult;
     },
     worstResult: function () {
       if (!this.player.playerResults) return 0;
-      return this.player.playerResults
-        .map((pr) => pr.result)
-        .reduce((acc, cur) => (cur < acc ? cur : acc), 9999);
+      let worstResult = this.player.playerResults.reduce((acc, cur) =>
+        cur.result < acc.result ? cur : acc
+      );
+      worstResult.sessionDate = format(
+        new Date(worstResult.session.date),
+        "dd/MM/yyyy",
+        {
+          locale: fr,
+        }
+      );
+      return worstResult;
     },
   },
   watch: {

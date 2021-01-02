@@ -24,7 +24,7 @@
         leave-to-class="opacity-0"
       >
         <div
-          v-show="isOpen"
+          v-show="isOpen || forceShow"
           class="absolute inset-0 transition-opacity bg-gray-500 bg-opacity-75"
           aria-hidden="true"
         ></div
@@ -52,9 +52,9 @@
           leave-class="translate-x-0"
           leave-to-class="translate-x-full"
         >
-          <div v-show="isOpen" class="w-screen max-w-md">
+          <div v-show="isOpen || forceShow" class="w-screen max-w-md">
             <div
-              class="flex flex-col h-full py-6 overflow-y-scroll bg-white shadow-xl"
+              class="flex flex-col h-full pt-6 overflow-y-scroll bg-white shadow-xl"
             >
               <div class="px-4 sm:px-6">
                 <div class="flex items-start justify-between">
@@ -90,13 +90,10 @@
                   </div>
                 </div>
               </div>
-              <div class="relative flex-1 px-4 mt-6 sm:px-6">
+              <div class="relative flex-1 mt-6">
                 <!-- Replace with your content -->
-                <div class="absolute inset-0 px-4 sm:px-6">
-                  <div
-                    class="h-full overflow-auto border-2 border-gray-200 border-dashed"
-                    aria-hidden="true"
-                  >
+                <div class="absolute inset-0">
+                  <div class="h-full overflow-auto" aria-hidden="true">
                     <slot></slot>
                   </div>
                 </div>
@@ -113,10 +110,10 @@
 <script>
 export default {
   name: "TailwindSlideOver",
-  props: ["isOpen", "title"],
-  data: () => {
+  props: ["isOpen", "title", "forceShow"],
+  data: function () {
     return {
-      displayComponent: false,
+      displayComponent: false || this.forceShow,
     };
   },
   methods: {

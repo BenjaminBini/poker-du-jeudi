@@ -1,16 +1,18 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import VueRouter from "vue-router";
-import App from "./App.vue";
 import "./main.css";
-import routes from "./router/routes";
-import ResultBadge from "./components/player/players-list/ResultBadge";
-import SessionCount from "./components/player/players-list/SessionCount";
+
+import App from "./App.vue";
+import PlayerLastSession from "./components/player/PlayerLastSession";
 import PlayerListItem from "./components/player/players-list/PlayerListItem";
 import PlayerPicture from "./components/player/PlayerPicture";
-import PlayerLastSession from "./components/player/PlayerLastSession";
 import PlayerTotalResult from "./components/player/PlayerTotalResult";
+import ResultBadge from "./components/player/players-list/ResultBadge";
+import SessionCount from "./components/player/players-list/SessionCount";
 import TailwindSpinner from "@/components/ui/TailwindSpinner";
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Vuex from "vuex";
+import routes from "./router/routes";
+import TailwindModal from "./components/ui/TailwindModal.vue";
 
 Vue.config.productionTip = false;
 Vue.use(Vuex);
@@ -23,6 +25,7 @@ Vue.component("player-picture", PlayerPicture);
 Vue.component("player-last-session", PlayerLastSession);
 Vue.component("player-total-result", PlayerTotalResult);
 Vue.component("tw-spinner", TailwindSpinner);
+Vue.component("tw-modal", TailwindModal);
 
 const store = new Vuex.Store({
   state: {
@@ -32,6 +35,7 @@ const store = new Vuex.Store({
   mutations: {
     setPageTitle(state, title) {
       state.pageTitle = title;
+      document.title = `${title} - Poker du jeudi`;
     },
     setPageActions(state, actions) {
       state.pageActions = actions;
