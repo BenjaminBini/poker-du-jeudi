@@ -52,6 +52,7 @@ import SessionService from "../services/session-service";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import SessionListItem from "@/components/session/SessionListItem";
+import settings from "@/settings";
 
 export default {
   name: "poker-sessions",
@@ -113,6 +114,15 @@ export default {
     });
     this.loading = false;
     this.$store.commit("setPageTitle", this.sessions.length + " sessions");
+    if (settings.forceEditMode) {
+      const actions = [
+        {
+          target: "/sessions/add",
+          label: "Nouvelle session",
+        },
+      ];
+      this.$store.commit("setPageActions", actions);
+    }
     //this.sessions.sort((s1, s2) => s2.compareTo(s2));
   },
 };

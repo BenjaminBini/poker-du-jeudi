@@ -7,12 +7,17 @@ module.exports = {
   },
   purge: [],
   theme: {
+    maxHeight: {
+      "40vh": "40vh",
+    },
     extend: {
       fontFamily: {
         sans: ["Inter var", ...defaultTheme.fontFamily.sans],
       },
     },
   },
-  variants: {},
-  plugins: [],
+  variants: {
+    extend: {},
+  },
+  plugins: [require("@tailwindcss/forms")],
 };

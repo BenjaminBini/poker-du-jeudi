@@ -1,8 +1,9 @@
-import Sessions from "../components/Sessions";
-import Players from "../components/player/players-list/Players";
-import Player from "../components/player/player-detail/Player";
+import AddSession from "@/components/session/AddSession";
 import Home from "@/components/Home";
+import Player from "../components/player/player-detail/Player";
+import Players from "../components/player/players-list/Players";
 import Session from "@/components/session/Session";
+import Sessions from "../components/Sessions";
 
 const routes = [
   {
@@ -20,6 +21,14 @@ const routes = [
     meta: {
       label: "Sessions",
       displayInMenu: true,
+    },
+  },
+  {
+    path: "/sessions/add",
+    component: AddSession,
+    meta: {
+      pageTitle: "Nouvelle session",
+      displayInMenu: false,
     },
   },
   {

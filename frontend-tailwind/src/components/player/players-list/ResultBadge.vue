@@ -4,7 +4,7 @@
     :class="playerResult.result &gt;= 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white'"
   >
     <svg
-      class="-ml-2 -mr-2 flex-shrink-0 self-center h-5 w-5 mr-0.5"
+      class="self-center flex-shrink-0 w-5 h-5 -ml-2 -mr-2"
       fill="currentColor"
       viewbox="0 0 20 20"
       :class="playerResult.result &gt;= 0 ? 'text-green-100' : 'text-red-100'"

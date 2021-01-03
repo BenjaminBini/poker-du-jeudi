@@ -63,7 +63,7 @@
           :loading="loading"
           :loading-player-results="loadingPlayerResults"
           :loading-player-buy-ins="loadingPlayerBuyIns"
-          :loadingPlayersToDelete="loadingPlayersToDelete"
+          :loading-players="loadingSessionRankingLines"
           :results="session.playerResults"
           title="Classement de la session"
           @edit-result="editResult"
@@ -78,6 +78,16 @@
         >
           <plus-icon class="w-5 h-5"></plus-icon>
           <span class="pl-1">Ajouter un joueur</span>
+        </tailwind-button>
+        <tailwind-button
+          v-if="showEditControls"
+          class="flex flex-col items-stretch mt-4"
+          type="alert"
+          size="sm"
+          @buttonClick="showDeleteModal = true"
+        >
+          <x-icon class="w-5 h-5"></x-icon>
+          <span class="pl-1">Supprimer la session</span>
         </tailwind-button>
         <add-player-panel
           v-if="showEditControls"
@@ -109,6 +119,16 @@
         ></ranking-component>
       </div>
     </div>
+    <tw-modal
+      title="Confirmer la suppression"
+      :text="`Êtes-vous certain de vouloir supprimer complètement la session ?`"
+      confirm-label="Oui, supprimer"
+      cancel-label="Non"
+      :loading="deleteLoading"
+      :is-open="showDeleteModal"
+      @confirm="confirmDeleteSession"
+      @cancel="showDeleteModal = false"
+    ></tw-modal>
   </div>
 </template>
 
@@ -124,6 +144,7 @@ import {
   HomeIcon,
   StarIcon,
   PlusIcon,
+  XIcon,
 } from "@vue-hero-icons/outline";
 import RankingComponent from "@/components/ranking/RankingComponent";
 import TailwindCard from "@/components/ui/TailwindCard.vue";
@@ -148,11 +169,13 @@ export default {
     SessionResultChartContainer,
     SessionResultRanking,
     TailwindButton,
+    XIcon,
   },
   data: () => ({
     session: Object,
     formattedDate: String,
     loading: true,
+    deleteLoading: false,
     playerListLoading: true,
     addPlayerDialogOpened: false,
     editSessionPanelOpened: false,
@@ -160,7 +183,8 @@ export default {
     showEditControls: false,
     loadingPlayerResults: [],
     loadingPlayerBuyIns: [],
-    loadingPlayersToDelete: [],
+    loadingSessionRankingLines: [],
+    showDeleteModal: false,
   }),
   computed: {
     results: function () {
@@ -228,23 +252,33 @@ export default {
       this.editSessionPanelOpened = true;
     },
     addPlayer: async function (event) {
+      this.addPlayerDialogOpened = false;
+      this.loadingSessionRankingLines.push(-1);
+      this.session.playerResults.push({
+        player: {
+          playerId: -1,
+        },
+        result: 0,
+      });
       const response = await SessionService.updatePlayerSessionResult(
         this.session.sessionId,
         event.playerId,
         0,
         1
       );
+      this.loadingSessionRankingLines = this.loadingPlayerResults.filter(
+        (id) => id != -1
+      );
       this.session = response.data;
-      this.addPlayerDialogOpened = false;
     },
     deleteResult: async function (event) {
-      this.loadingPlayersToDelete.push(event.playerId);
+      this.loadingSessionRankingLines.push(event.playerId);
       const response = await SessionService.deletePlayerSessionResult(
         this.session.sessionId,
         event.playerId
       );
       this.session = response.data;
-      this.loadingPlayersToDelete = this.loadingPlayerResults.filter(
+      this.loadingSessionRankingLines = this.loadingPlayerResults.filter(
         (id) => id != event.playerId
       );
     },
@@ -276,6 +310,11 @@ export default {
           break;
       }
       this.session = response.data;
+    },
+    confirmDeleteSession: async function () {
+      this.deleteLoading = true;
+      await SessionService.deleteSession(this.session.sessionId);
+      this.$router.push("/sessions");
     },
   },
   mounted() {

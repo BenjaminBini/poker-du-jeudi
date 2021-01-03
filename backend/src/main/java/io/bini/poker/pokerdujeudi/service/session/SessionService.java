@@ -47,8 +47,13 @@ public class SessionService {
 
     public void delete(Long id) {
         Session session = sessionRepository.getOne(id);
+        Session previousSession = session.getPreviousSession();
         session.getPlayerResults().forEach(playerResultService::delete);
+        this.rankingService.getSessionRankings(id).forEach(r -> this.rankingService.deleteRanking(r.getRankingKey()));
         sessionRepository.deleteById(id);
+        if (previousSession != null) {
+            rankingService.computeRankingsForSession(previousSession);
+        }
     }
 
     public Session getLastSession() {

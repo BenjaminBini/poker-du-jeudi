@@ -70,6 +70,10 @@ public class RankingService {
         this.rankingRepository.saveAll(rankings);
     }
 
+    public void deleteRanking(RankingKey rankingKey) {
+        this.rankingRepository.deleteById(rankingKey);
+    }
+
     public List<Ranking> getSessionRankings(Long sessionId) {
         return this.rankingRepository.findByRankingKey_SessionId(sessionId);
     }

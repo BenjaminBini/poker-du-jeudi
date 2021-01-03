@@ -14,8 +14,8 @@
           <span class="text-sm text-gray-500">
             {{ player.playerResults.length }} session{{
               player.playerResults.length > 1 ? "s" : ""
-            }}</span
-          >
+            }}
+          </span>
         </a>
       </li>
     </ul>

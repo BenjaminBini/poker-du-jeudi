@@ -22,4 +22,10 @@ export default {
   deletePlayerSessionResult(sessionId, playerId) {
     return Axios.post(`/sessions/${sessionId}/player/${playerId}/delete`);
   },
+  addSession(session) {
+    return Axios.post("/sessions/add", session);
+  },
+  deleteSession(sessionId) {
+    return Axios.post(`/sessions/${sessionId}/delete`);
+  },
 };

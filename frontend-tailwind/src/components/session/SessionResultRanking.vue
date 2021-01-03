@@ -57,11 +57,10 @@
               >
                 <template
                   v-if="
-                    loadingPlayersToDelete.filter((p) => p == row.playerId)
-                      .length > 0
+                    loadingPlayers.filter((p) => p == row.playerId).length > 0
                   "
                 >
-                  <td colspan="100">
+                  <td colspan="100" class="py-0">
                     <div class="flex justify-center py-3">
                       <tw-spinner></tw-spinner>
                     </div>
@@ -149,7 +148,7 @@
     </div>
     <tw-modal
       title="Confirmer la suppression"
-      :text="`Confirmer la suppression de la participation de ${playerToDeleteFirstName}`"
+      :text="`Êtes-vous certain de vouloir supprimer la participation de ${playerToDeleteFirstName} ?`"
       confirm-label="Oui, supprimer"
       cancel-label="Non"
       :is-open="showDeleteModal"
@@ -173,7 +172,7 @@ export default {
     "editMode",
     "loadingPlayerResults",
     "loadingPlayerBuyIns",
-    "loadingPlayersToDelete",
+    "loadingPlayers",
   ],
   data: function () {
     return {
