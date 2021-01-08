@@ -13,6 +13,7 @@ import VueRouter from "vue-router";
 import Vuex from "vuex";
 import routes from "./router/routes";
 import TailwindModal from "./components/ui/TailwindModal.vue";
+import { Axios } from "@/services/axios-service";
 
 Vue.config.productionTip = false;
 Vue.use(Vuex);
@@ -27,12 +28,24 @@ Vue.component("player-total-result", PlayerTotalResult);
 Vue.component("tw-spinner", TailwindSpinner);
 Vue.component("tw-modal", TailwindModal);
 
+const jwt = localStorage.getItem("jwt");
+if (jwt) {
+  Axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
+}
+
 const store = new Vuex.Store({
   state: {
     pageTitle: "Poker du jeudi",
     pageActions: [],
+    editMode: !!jwt,
   },
   mutations: {
+    enableEditMode(state) {
+      state.editMode = true;
+    },
+    disableEditMode(state) {
+      state.editMode = false;
+    },
     setPageTitle(state, title) {
       state.pageTitle = title;
       document.title = `${title} - Poker du jeudi`;

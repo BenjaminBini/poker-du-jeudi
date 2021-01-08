@@ -64,6 +64,7 @@
           :loading-player-results="loadingPlayerResults"
           :loading-player-buy-ins="loadingPlayerBuyIns"
           :loading-players="loadingSessionRankingLines"
+          :edit-mode="showEditControls"
           :results="session.playerResults"
           title="Classement de la session"
           @edit-result="editResult"
@@ -180,13 +181,15 @@ export default {
     addPlayerDialogOpened: false,
     editSessionPanelOpened: false,
     playerList: [],
-    showEditControls: false,
     loadingPlayerResults: [],
     loadingPlayerBuyIns: [],
     loadingSessionRankingLines: [],
     showDeleteModal: false,
   }),
   computed: {
+    showEditControls: function () {
+      return this.$store.state.editMode || settings.forceEditMode;
+    },
     results: function () {
       if (this.loading) return [];
       return [...this.session.playerResults].sort(
@@ -320,7 +323,6 @@ export default {
   mounted() {
     this.fetchData();
     this.fetchPlayerList();
-    this.showEditControls = settings.forceEditMode;
   },
 };
 </script>

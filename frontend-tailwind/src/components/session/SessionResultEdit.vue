@@ -23,7 +23,7 @@
         @blur="save"
         @keyup.enter="save"
         ref="resultInput"
-        class="px-1 py-0 text-center text-white border-0 rounded-md w-14 focus:outline-none"
+        class="px-1 py-0 text-sm text-center text-white border-0 rounded-md focus:ring-0 focus:border-0 w-14 focus:outline-none"
         :class="{
           'bg-red-500': editedResult < 0,
           'bg-green-500': editedResult >= 0,

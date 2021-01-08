@@ -114,7 +114,7 @@ export default {
     });
     this.loading = false;
     this.$store.commit("setPageTitle", this.sessions.length + " sessions");
-    if (settings.forceEditMode) {
+    if (this.$store.state.editMode || settings.forceEditMode) {
       const actions = [
         {
           target: "/sessions/add",

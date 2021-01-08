@@ -87,65 +87,21 @@ Menu open: "block", Menu closed: "hidden"--><svg
                 </svg>
               </button>
             </div>
-            <div class="hidden lg:block lg:ml-4">
+            <div class="hidden px-3 lg:block lg:ml-4">
               <div class="flex items-center">
-                <!-- Profile dropdown-->
-                <div class="relative flex-shrink-0 ml-3">
-                  <div>
-                    <button
-                      class="flex text-sm text-white bg-indigo-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-600 focus:ring-white"
-                      id="user-menu"
-                      @click="isOpen = !isOpen"
-                      aria-haspopup="true"
-                    >
-                      <span class="sr-only">Open user menu</span
-                      ><img
-                        class="w-8 h-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=2&amp;w=256&amp;h=256&amp;q=80"
-                        alt=""
-                      />
-                    </button>
-                  </div>
-                  <!--Profile dropdown panel, show/hide based on dropdown state.
-Entering: "transition ease-out duration-100"
-From: "transform opacity-0 scale-95"
-To: "transform opacity-100 scale-100"
-Leaving: "transition ease-in duration-75"
-From: "transform opacity-100 scale-100"
-To: "transform opacity-0 scale-95"-->
-                  <transition
-                    enter-active-class="transition duration-100 ease-out"
-                    enter-class="transform scale-95 opacity-0"
-                    enter-to-class="transform scale-100 opacity-100"
-                    leave-active-class="transition duration-75 ease-in"
-                    leave-class="transform scale-100 opacity-100"
-                    leave-to-class="transform scale-95 opacity-0"
-                  ></transition>
-                  <div
-                    class="absolute right-0 w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
-                    v-show="isOpen"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="user-menu"
-                  >
-                    <a
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      href="#"
-                      role="menuitem"
-                      >Your Profile</a
-                    ><a
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      href="#"
-                      role="menuitem"
-                      >Settings</a
-                    ><a
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      href="#"
-                      role="menuitem"
-                      >Sign out</a
-                    >
-                  </div>
-                </div>
+                <router-link
+                  v-if="!editMode"
+                  to="/login"
+                  class="text-sm text-white hover:underline"
+                  >Se connecter</router-link
+                >
+                <a
+                  href="#"
+                  v-if="editMode"
+                  class="text-sm text-white hover:underline"
+                  @click="logout"
+                  >Se déconnecter</a
+                >
               </div>
             </div>
           </div>
@@ -165,37 +121,23 @@ Menu open: "block", Menu closed: "hidden"-->
               >{{ route.meta.label }}</router-link
             >
           </div>
-          <div class="pt-4 pb-3 border-t border-indigo-700">
-            <div class="flex items-center px-5">
-              <div class="flex-shrink-0">
-                <img
-                  class="w-10 h-10 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=2&amp;w=256&amp;h=256&amp;q=80"
-                  alt=""
-                />
-              </div>
-              <div class="ml-3">
-                <div class="text-base font-medium text-white">Tom Cook</div>
-                <div class="text-sm font-medium text-indigo-300">
-                  tom@example.com
-                </div>
-              </div>
-            </div>
+          <div class="pb-3 border-t border-indigo-700">
             <div class="px-2 mt-3 space-y-1">
-              <a
+              <router-link
+                v-if="!editMode"
+                to="/login"
                 class="block px-3 py-2 text-base font-medium text-white rounded-md hover:bg-indigo-500 hover:bg-opacity-75"
-                href="#"
-                >Your Profile</a
-              ><a
-                class="block px-3 py-2 text-base font-medium text-white rounded-md hover:bg-indigo-500 hover:bg-opacity-75"
-                href="#"
-                >Settings</a
-              ><a
-                class="block px-3 py-2 text-base font-medium text-white rounded-md hover:bg-indigo-500 hover:bg-opacity-75"
-                href="#"
-                >Sign out</a
               >
+                Se connecter
+              </router-link>
             </div>
+            <a
+              href="#"
+              v-if="editMode"
+              class="block px-3 py-2 text-base font-medium text-white rounded-md hover:bg-indigo-500 hover:bg-opacity-75"
+              @click="logout"
+              >Se déconnecter</a
+            >
           </div>
         </div>
       </nav>
@@ -218,6 +160,7 @@ Menu open: "block", Menu closed: "hidden"-->
 
 <script>
 import CustomHeading from "@/components/CustomHeading";
+import AuthService from "@/services/auth-service";
 
 export default {
   name: "main-template",
@@ -236,6 +179,15 @@ export default {
     },
     pageActions() {
       return this.$store.state.pageActions;
+    },
+    editMode() {
+      return this.$store.state.editMode;
+    },
+  },
+  methods: {
+    logout() {
+      AuthService.logout();
+      this.$store.commit("disableEditMode");
     },
   },
 };

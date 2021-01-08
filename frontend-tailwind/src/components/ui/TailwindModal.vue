@@ -108,7 +108,7 @@
           <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
             <tw-spinner v-if="loading"></tw-spinner>
             <button
-              v-if="!loading"
+              v-if="!loading && confirmLabel"
               @click="confirm"
               type="button"
               class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
@@ -116,7 +116,7 @@
               {{ confirmLabel }}
             </button>
             <button
-              v-if="!loading"
+              v-if="!loading && cancelLabel"
               @click="cancel"
               type="button"
               class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"

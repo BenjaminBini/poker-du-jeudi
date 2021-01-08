@@ -63,13 +63,13 @@
                   Joueur
                 </th>
                 <th
-                  class="px-0 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase bg-white"
+                  class="px-0 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase bg-white"
                   scope="col"
                 >
                   Part.
                 </th>
                 <th
-                  class="px-0 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase bg-white"
+                  class="py-3 pl-0 pr-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase bg-white"
                   scope="col"
                 >
                   Résultat
@@ -113,13 +113,13 @@
                   {{ row.playerName }}
                 </td>
                 <td
-                  class="px-0 py-3 text-sm font-medium whitespace-nowrap"
+                  class="px-0 py-3 text-sm font-medium text-right whitespace-nowrap"
                   :class="row.isActive ? 'text-white' : 'text-gray-500'"
                 >
                   {{ row.sessionsCount }}
                 </td>
                 <td
-                  class="px-0 py-2 text-sm whitespace-nowrap"
+                  class="py-2 pl-0 pr-3 text-sm text-right whitespace-nowrap"
                   :class="row.isActive ? 'text-white' : 'text-gray-900'"
                 >
                   <span

@@ -32,7 +32,8 @@
                   Joueur
                 </th>
                 <th
-                  class="px-0 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase bg-white"
+                  class="px-0 py-3 text-xs font-medium tracking-wider text-gray-500 uppercase bg-white"
+                  :class="editMode ? 'text-center' : 'text-right'"
                   scope="col"
                 >
                   Buy-ins
@@ -43,7 +44,7 @@
                 >
                   Résultat
                 </th>
-                <th class="bg-white" scope="col" v-if="showEditControls"></th>
+                <th class="bg-white" scope="col" v-if="editMode"></th>
               </tr>
             </thead>
             <tbody>
@@ -81,7 +82,7 @@
                   </td>
                   <td class="px-0 text-sm text-gray-500 whitespace-nowrap">
                     <session-buy-ins-edit
-                      :showEditControls="showEditControls"
+                      :editMode="editMode"
                       :player-id="row.playerId"
                       :buy-ins="row.buyIns"
                       :loading="
@@ -102,7 +103,7 @@
                     <session-result-edit
                       :result="row.result"
                       :player-id="row.playerId"
-                      :show-edit-controls="showEditControls"
+                      :show-edit-controls="editMode"
                       :loading="
                         loadingPlayerResults.filter((id) => row.playerId == id)
                           .length > 0
@@ -117,7 +118,7 @@
                       "
                     ></session-result-edit>
                   </td>
-                  <td v-if="showEditControls">
+                  <td v-if="editMode">
                     <button
                       @click="openDeleteModal(row)"
                       class="flex items-center justify-center w-6 h-6 text-red-500 border border-red-500 rounded-md focus:outline-none hover:bg-red-500 hover:text-white"
@@ -162,7 +163,6 @@
 import SessionBuyInsEdit from "./SessionBuyInsEdit.vue";
 import { XIcon } from "@vue-hero-icons/outline";
 import SessionResultEdit from "@/components/session/SessionResultEdit.vue";
-import settings from "@/settings";
 export default {
   name: "SessionResultRanking",
   props: [
@@ -176,7 +176,6 @@ export default {
   ],
   data: function () {
     return {
-      showEditControls: false,
       showDeleteModal: false,
       playerToDeleteId: undefined,
       playerToDeleteFirstName: undefined,
@@ -218,11 +217,6 @@ export default {
     closeDeleteModal: function () {
       this.showDeleteModal = false;
     },
-  },
-  mounted: function () {
-    this.showEditControls = this.editMode
-      ? this.editMode
-      : settings.forceEditMode;
   },
 };
 </script>

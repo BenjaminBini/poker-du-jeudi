@@ -1,5 +1,6 @@
 import AddSession from "@/components/session/AddSession";
 import Home from "@/components/Home";
+import Login from "../components/Login";
 import Player from "../components/player/player-detail/Player";
 import Players from "../components/player/players-list/Players";
 import Session from "@/components/session/Session";
@@ -13,6 +14,14 @@ const routes = [
       label: "Accueil",
       pageTitle: "Poker du jeudi",
       displayInMenu: true,
+    },
+  },
+  {
+    path: "/login",
+    component: Login,
+    meta: {
+      pageTitle: "Se connecter",
+      displayInMenu: false,
     },
   },
   {
