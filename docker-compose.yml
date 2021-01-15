@@ -6,11 +6,12 @@ services:
     ports:
       - "7777:8081"
     environment:
-      - "SPRING_DATASOURCE_URL=${DATABASE_URL}"
-      - "SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}"
-      - "SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}"
+      - "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
+      - "SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}"
+      - "SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}"
+    env_file: .env
+
   frontend:
     build: ./frontend-tailwind
     ports:
       - "7778:80"
-

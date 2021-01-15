@@ -1,11 +1,11 @@
 import axios from "axios";
 
 export let Axios = axios.create({
-  baseURL: `/api`,
+  baseURL: process.env.VUE_APP_API_BASE,
   timeout: 20000,
 });
 
 export let Login = axios.create({
-  baseURL: `/login`,
+  baseURL: process.env.VUE_APP_API_LOGIN,
   timeout: 20000,
 });

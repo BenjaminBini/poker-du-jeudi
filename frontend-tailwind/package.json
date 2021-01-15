@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@tailwindcss/aspect-ratio": "^0.2.0",
     "@tailwindcss/forms": "^0.2.1",
-    "@tailwindcss/typography": "^0.3.1",
-    "@tailwindcss/ui": "^0.7.2",
+    "@tailwindcss/postcss7-compat": "^2.0.2",
+    "@tailwindcss/typography": "^0.4.0",
     "@vue-hero-icons/outline": "^1.6.3",
     "@vue-hero-icons/solid": "^1.6.3",
     "autoprefixer": "^9",

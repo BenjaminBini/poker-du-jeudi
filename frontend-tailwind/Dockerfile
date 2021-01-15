@@ -1,9 +1,10 @@
 FROM node:latest as build-stage
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+COPY package.json ./
+COPY yarn.lock ./
+RUN yarn install
 COPY ./ .
-RUN npm run build
+RUN yarn build
 
 FROM nginx as production-stage
 RUN mkdir /app
