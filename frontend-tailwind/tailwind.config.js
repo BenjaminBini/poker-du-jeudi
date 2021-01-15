@@ -5,7 +5,9 @@ module.exports = {
     // removeDeprecatedGapUtilities: true,
     // purgeLayersByDefault: true,
   },
-  purge: [],
+  purge: [
+    './src/**/*.vue',
+  ],
   theme: {
     maxHeight: {
       "40vh": "40vh",
