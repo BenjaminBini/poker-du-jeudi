@@ -10,8 +10,10 @@ services:
       - "SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}"
       - "SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}"
     env_file: .env
+    restart: always
 
   frontend:
     build: ./frontend-tailwind
     ports:
       - "7778:80"
+    restart: always
