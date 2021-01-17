@@ -4,5 +4,5 @@ export default {
   green: "#10B981",
   red: "#EF4444",
   indigo: "#4F46E5",
-  forceEditMode: true,
+  forceEditMode: false,
 };

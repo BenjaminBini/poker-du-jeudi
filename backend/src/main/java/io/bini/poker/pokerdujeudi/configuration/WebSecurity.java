@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import static io.bini.poker.pokerdujeudi.configuration.security.SecurityConstants.LOGIN_URL;
 import static io.bini.poker.pokerdujeudi.configuration.security.SecurityConstants.SIGN_UP_URL;
 
 @Configuration
@@ -38,20 +39,36 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
+                    .antMatchers(HttpMethod.POST, SIGN_UP_URL, LOGIN_URL).permitAll()
+                    .antMatchers(HttpMethod.GET, "/**").authenticated()
+                    .antMatchers(HttpMethod.POST, "/**").authenticated()
+                .and()
+                    .addFilter(new JWTAuthenticationFilter(authenticationManager(), JWT_SECRET))
+                    .addFilter(new JWTAuthorizationFilter(authenticationManager(), JWT_SECRET))
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+/*
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .and().authorizeRequests()
+                .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
+                .and().authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
-                .and().authorizeRequests() // FIXME : remove when implementing login in front
-                .antMatchers(HttpMethod.POST, "/**").permitAll() // FIXME : remove when implementing login in front
-                .and().authorizeRequests() // FIXME : remove when implementing login in front
-                .antMatchers(HttpMethod.DELETE, "/**").permitAll() // FIXME : remove when implementing login in front
+                //.and().authorizeRequests() // FIXME : remove when implementing login in front
+                //.antMatchers(HttpMethod.POST, "/**").permitAll() // FIXME : remove when implementing login in front
+                //.and().authorizeRequests() // FIXME : remove when implementing login in front
+                //.antMatchers(HttpMethod.DELETE, "/**").permitAll() // FIXME : remove when implementing login in front
+                .and().authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), JWT_SECRET))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), JWT_SECRET))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+ */
     }
 
     @Override
