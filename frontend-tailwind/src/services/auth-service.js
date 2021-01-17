@@ -7,7 +7,7 @@ export default {
         username,
         password,
       });
-      const jwt = response.headers.authorization.replace("Bearer ", "");
+      const jwt = response.data.replace("Bearer ", "");
       Axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
       localStorage.setItem("jwt", jwt);
     } catch (err) {
