@@ -28,16 +28,12 @@ Vue.component("player-total-result", PlayerTotalResult);
 Vue.component("tw-spinner", TailwindSpinner);
 Vue.component("tw-modal", TailwindModal);
 
-const jwt = localStorage.getItem("jwt");
-if (jwt) {
-  Axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
-}
 
 const store = new Vuex.Store({
   state: {
     pageTitle: "Poker du jeudi",
     pageActions: [],
-    editMode: !!jwt,
+    editMode: !!localStorage.getItem("jwt"),
   },
   mutations: {
     enableEditMode(state) {
@@ -54,6 +50,21 @@ const store = new Vuex.Store({
       state.pageActions = actions;
     },
   },
+});
+
+Axios.interceptors.request.use(function (config) {
+  // Do something before request is sent
+  const jwt = localStorage.getItem("jwt");
+  if (jwt) {
+    config.headers.common["Authorization"] = `Bearer ${localStorage.getItem("jwt")}`;
+    store.commit("enableEditMode");
+  } else {
+    store.commit("disableEditMode");
+  }
+  return config;
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error);
 });
 
 const router = new VueRouter({
