@@ -6,6 +6,6 @@ export let Axios = axios.create({
 });
 
 export let Login = axios.create({
-  baseURL: process.env.VUE_APP_API_LOGIN,
+  baseURL: process.env.VUE_APP_LOGIN_BASE,
   timeout: 20000,
 });
