@@ -79,7 +79,6 @@ export default {
         this.$store.commit("enableEditMode");
         this.$router.push("/");
       } catch (err) {
-        console.log(err);
         this.loading = false;
         this.showErrorModal = true;
         this.$store.commit("disableEditMode");
