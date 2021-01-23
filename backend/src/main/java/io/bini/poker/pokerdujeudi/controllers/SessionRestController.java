@@ -84,6 +84,8 @@ public class SessionRestController {
         this.playerResultService.delete(playerId, sessionId);
         Session session = this.sessionService.get(sessionId);
         session.getPlayerResults().removeIf(r -> r.getPlayer().getPlayerId() == playerId);
+        Optional<Ranking> playerRanking = this.rankingService.getSessionRankings((long) sessionId).stream().filter(r -> r.getPlayer().getPlayerId() == playerId).findFirst();
+        playerRanking.ifPresent(ranking -> this.rankingService.deleteRanking(ranking.getRankingKey()));
         this.rankingService.computeRankingsForSession(session);
         return session;
     }

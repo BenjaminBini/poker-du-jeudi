@@ -41,6 +41,7 @@ public class RankingService {
         logger.info("Computing rankings from session with id: " + session.getSessionId());
         List<PlayerResult> allResults = this.playerResultRepository.findAll();
         List<Session> allSessions = this.sessionRepository.findAll().stream().filter(s -> s.getDate().compareTo(session.getDate()) >= 0).collect(Collectors.toList());
+
         List<Player> players = this.playerRepository.findAll();
 
         List<Ranking> rankings = new ArrayList<>();
@@ -68,6 +69,7 @@ public class RankingService {
 
         }
         this.rankingRepository.saveAll(rankings);
+        session.setRankings(rankings.stream().filter(r -> r.getRankingKey().getSessionId() == session.getSessionId()).collect(Collectors.toList()));
     }
 
     public void deleteRanking(RankingKey rankingKey) {
