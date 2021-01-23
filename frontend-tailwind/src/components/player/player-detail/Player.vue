@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard
         label="Résultat total"
         :loading="playerLoading"
@@ -43,7 +43,7 @@
       </StatCard>
     </dl>
     <dl
-      class="grid grid-cols-1 gap-5 mt-5 lg:mt-14 sm:grid-cols-2 lg:grid-cols-4"
+      class="grid grid-cols-1 gap-5 mt-5 xl:mt-14 sm:grid-cols-2 xl:grid-cols-4"
     >
       <StatCard
         label="Meilleure session"
@@ -102,8 +102,39 @@
       :years-played="yearsPlayed"
       @year-selected="yearSelected"
     ></ResultChartContainer>
-    <div class="flex space-x-6">
-      <div class="w-1/2">
+    <div class="lg:space-x-6 lg:flex">
+      <div class="lg:w-1/2">
+        <h2
+          class="p-6 pb-0 pl-3 mb-6 text-xl font-medium tracking-wide text-gray-600"
+        >
+          Classements
+        </h2>
+        <div class="space-y-8 sm:flex sm:space-x-8 sm:space-y-0">
+          <div class="sm:w-1/2">
+            <RankingComponent
+              :loading="generalRankingsLoading"
+              :rankings="generalRankings"
+              :previous-rankings="previousRankings"
+              :active-player-id="player.playerId"
+              :season-ranking="false"
+              title="Classement général"
+            ></RankingComponent>
+          </div>
+          <div class="sm:w-1/2">
+            <RankingComponent
+              :loading="seasonRankingsLoading"
+              :rankings="rankings"
+              :previous-rankings="previousRankings"
+              :active-player-id="player.playerId"
+              :season-ranking="true"
+              :title="`Classement ${
+                selectedYear === 0 ? yearsPlayed[0] : selectedYear
+              }`"
+            ></RankingComponent>
+          </div>
+        </div>
+      </div>
+      <div class="lg:w-1/2">
         <h2
           class="p-6 pb-0 pl-3 text-xl font-medium tracking-wide text-gray-600"
         >
@@ -126,37 +157,6 @@
             :result="result"
             :key="result.session.sessionId"
           ></PlayerSessionCard>
-        </div>
-      </div>
-      <div class="w-1/2">
-        <h2
-          class="p-6 pb-0 pl-3 mb-6 text-xl font-medium tracking-wide text-gray-600"
-        >
-          Classements
-        </h2>
-        <div class="flex space-x-8">
-          <div class="w-1/2">
-            <RankingComponent
-              :loading="generalRankingsLoading"
-              :rankings="generalRankings"
-              :previous-rankings="previousRankings"
-              :active-player-id="player.playerId"
-              :season-ranking="false"
-              title="Classement général"
-            ></RankingComponent>
-          </div>
-          <div class="w-1/2">
-            <RankingComponent
-              :loading="seasonRankingsLoading"
-              :rankings="rankings"
-              :previous-rankings="previousRankings"
-              :active-player-id="player.playerId"
-              :season-ranking="true"
-              :title="`Classement ${
-                selectedYear === 0 ? yearsPlayed[0] : selectedYear
-              }`"
-            ></RankingComponent>
-          </div>
         </div>
       </div>
     </div>

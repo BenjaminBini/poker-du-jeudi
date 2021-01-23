@@ -1,14 +1,17 @@
 <template>
-  <div class="flex w-1/2 space-x-6" v-if="season.length &gt; 0">
-    <div class="w-1/2">
+  <div
+    class="w-full space-y-6 sm:space-y-0 sm:space-x-6 sm:flex lg:w-1/2"
+    v-if="season.length &gt; 0"
+  >
+    <div class="w-full sm:w-1/2">
       <RankingComponent
         :rankings="rankings"
         :season-ranking="false"
         title="Classement général"
       ></RankingComponent>
     </div>
-    <div class="w-1/2">
-      <h2 class="pb-0 pl-3 text-xl font-medium tracking-wide text-white"></h2>
+    <div class="w-full sm:w-1/2">
+      <h2 class="pb-0 text-xl font-medium tracking-wide text-white"></h2>
       <RankingComponent
         :rankings="rankings"
         :season-ranking="true"
