@@ -28,7 +28,6 @@ Vue.component("player-total-result", PlayerTotalResult);
 Vue.component("tw-spinner", TailwindSpinner);
 Vue.component("tw-modal", TailwindModal);
 
-
 const store = new Vuex.Store({
   state: {
     pageTitle: "Poker du jeudi",
@@ -52,21 +51,6 @@ const store = new Vuex.Store({
   },
 });
 
-Axios.interceptors.request.use(function (config) {
-  // Do something before request is sent
-  const jwt = localStorage.getItem("jwt");
-  if (jwt) {
-    config.headers.common["Authorization"] = `Bearer ${localStorage.getItem("jwt")}`;
-    store.commit("enableEditMode");
-  } else {
-    store.commit("disableEditMode");
-  }
-  return config;
-}, function (error) {
-  // Do something with request error
-  return Promise.reject(error);
-});
-
 const router = new VueRouter({
   routes,
   mode: "history",
@@ -85,3 +69,35 @@ new Vue({
   store: store,
   render: (h) => h(App),
 }).$mount("#app");
+
+Axios.interceptors.request.use(
+  function(config) {
+    // Do something before request is sent
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      config.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
+        "jwt"
+      )}`;
+      store.commit("enableEditMode");
+    } else {
+      store.commit("disableEditMode");
+    }
+    return config;
+  },
+  function(error) {
+    return Promise.reject(error);
+  }
+);
+
+Axios.interceptors.response.use(
+  function(config) {
+    return config;
+  },
+  function(error) {
+    if (error.response.status === 403) {
+      localStorage.clear();
+      location.reload();
+    }
+    return Promise.reject(error);
+  }
+);

@@ -11,8 +11,7 @@
               v-model="username"
               id="username"
               name="username"
-              type="username"
-              autocomplete="username"
+              type="text"
               required
               class="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
@@ -77,7 +76,12 @@ export default {
         await AuthService.login(this.username, this.password);
         this.loading = false;
         this.$store.commit("enableEditMode");
-        this.$router.push("/");
+        const returnURL = this.$route.query.returnURL;
+        if (returnURL) {
+          this.$router.push(returnURL);
+        } else {
+          this.$router.push("/");
+        }
       } catch (err) {
         this.loading = false;
         this.showErrorModal = true;

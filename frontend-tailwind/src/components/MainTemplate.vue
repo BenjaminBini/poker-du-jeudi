@@ -91,7 +91,7 @@ Menu open: "block", Menu closed: "hidden"--><svg
               <div class="flex items-center">
                 <router-link
                   v-if="!editMode"
-                  to="/login"
+                  :to="`/login?returnURL=${this.$router.currentRoute.path}`"
                   class="text-sm text-white hover:underline"
                   >Se connecter</router-link
                 >
@@ -125,7 +125,7 @@ Menu open: "block", Menu closed: "hidden"-->
             <div class="px-2 mt-3 space-y-1">
               <router-link
                 v-if="!editMode"
-                to="/login"
+                :to="`/login?returnURL=${this.$router.currentRoute.path}`"
                 class="block px-3 py-2 text-base font-medium text-white rounded-md hover:bg-indigo-500 hover:bg-opacity-75"
               >
                 Se connecter
