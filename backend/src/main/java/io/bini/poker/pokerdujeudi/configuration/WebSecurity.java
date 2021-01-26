@@ -48,27 +48,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                     .addFilter(new JWTAuthenticationFilter(authenticationManager(), JWT_SECRET))
                     .addFilter(new JWTAuthorizationFilter(authenticationManager(), JWT_SECRET))
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-/*
-        http.cors().and().csrf().disable()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                .and().authorizeRequests()
-                .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
-                .and().authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/**").permitAll()
-                //.and().authorizeRequests() // FIXME : remove when implementing login in front
-                //.antMatchers(HttpMethod.POST, "/**").permitAll() // FIXME : remove when implementing login in front
-                //.and().authorizeRequests() // FIXME : remove when implementing login in front
-                //.antMatchers(HttpMethod.DELETE, "/**").permitAll() // FIXME : remove when implementing login in front
-                .and().authorizeRequests()
-                .anyRequest().authenticated()
-                .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), JWT_SECRET))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), JWT_SECRET))
-                // this disables session creation on Spring Security
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
- */
     }
 
     @Override
