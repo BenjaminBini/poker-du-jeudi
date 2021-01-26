@@ -13,7 +13,7 @@ services:
     restart: always
 
   frontend:
-    build: ./frontend-tailwind
+    build: ./frontend
     ports:
       - "7778:80"
     restart: always
