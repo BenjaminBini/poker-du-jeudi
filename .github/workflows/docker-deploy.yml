@@ -19,8 +19,6 @@ jobs:
           echo SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD >> .env
           echo VUE_APP_API_BASE=$VUE_APP_API_BASE >> frontend/.env.local
           echo VUE_API_LOGIN_BASE=$VUE_API_LOGIN_BASE >> frontend/.env.local
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-          docker-compose pull
           docker-compose build
       - name: Push the image
         run: |
