@@ -13,10 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
+        env:
+          VUE_APP_API_BASE: ${{ secrets.VUE_APP_API_BASE }}
+          VUE_APP_LOGIN_BASE: ${{ secrets.VUE_APP_LOGIN_BASE }}
         run: |
-          echo SPRING_DATASOURCE_URL=$DATABASE_URL >> .env
-          echo SPRING_DATASOURCE_USERNAME=$DATABASE_USERNAME >> .env
-          echo SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD >> .env
+          touch .env
           echo VUE_APP_API_BASE=$VUE_APP_API_BASE >> frontend/.env.production
           echo VUE_APP_LOGIN_BASE=$VUE_APP_LOGIN_BASE >> frontend/.env.production
           docker-compose build
