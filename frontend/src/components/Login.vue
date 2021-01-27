@@ -1,6 +1,6 @@
 <template>
   <div class="sm:w-full sm:max-w-md">
-    <div class="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
+    <div class="px-4 py-8 bg-white shadow rounded-lg sm:px-10">
       <form @submit="login" class="space-y-6" method="POST">
         <div>
           <label for="username" class="block text-sm font-medium text-gray-700">

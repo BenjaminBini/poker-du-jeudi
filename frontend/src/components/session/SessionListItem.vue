@@ -8,7 +8,7 @@
     </div>
     <div
       v-if="!loading"
-      class="col-span-1 overflow-hidden bg-white shadow sm:rounded-md"
+      class="col-span-1 overflow-hidden bg-white shadow rounded-md"
     >
       <router-link
         class="block transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:bg-gray-50"

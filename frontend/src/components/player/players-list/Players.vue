@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-hidden bg-white shadow sm:rounded-md">
+  <div class="overflow-hidden bg-white shadow rounded-md">
     <ul v-if="loading">
       <li>
         <player-list-item :loading="true"></player-list-item>

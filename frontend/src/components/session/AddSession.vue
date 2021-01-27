@@ -11,7 +11,7 @@
             </div>
           </div>
           <div class="mt-5 md:mt-0 md:col-span-2">
-            <div class="overflow-hidden shadow sm:rounded-md">
+            <div class="overflow-hidden rounded-md shadow">
               <div class="px-4 py-5 bg-white sm:p-6">
                 <div class="grid grid-cols-6 gap-6">
                   <div class="col-span-6 sm:col-span-3">
@@ -126,7 +126,7 @@
             </div>
           </div>
           <div class="mt-5 md:mt-0 md:col-span-2">
-            <div class="overflow-auto shadow max-h-40vh sm:rounded-md">
+            <div class="overflow-auto rounded-md shadow max-h-40vh">
               <div class="px-4 py-5 bg-white sm:p-6">
                 <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
                   <selectable-player
@@ -145,7 +145,7 @@
                 </div>
               </div>
             </div>
-            <div class="mt-6 overflow-auto shadow max-h-1/2-vh sm:rounded-md">
+            <div class="mt-6 overflow-auto rounded-md shadow max-h-1/2-vh">
               <div class="px-4 py-5 bg-white sm:p-6">
                 <label class="block mb-3 text-sm font-medium text-gray-700"
                   >Joueurs sélectionnés</label

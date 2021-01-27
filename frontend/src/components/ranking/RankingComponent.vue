@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col overflow-hidden divide-y divide-gray-200 shadow sm:rounded-lg"
+    class="flex flex-col overflow-hidden divide-y divide-gray-200 shadow rounded-lg"
   >
     <div
       class="p-2 pl-3 font-bold tracking-wide text-center text-indigo-600 bg-white text-l"
