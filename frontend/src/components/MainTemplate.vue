@@ -110,6 +110,7 @@ Menu open: "block", Menu closed: "hidden"-->
                 v-if="!editMode"
                 :to="`/login?returnURL=${this.$router.currentRoute.path}`"
                 class="block px-3 py-2 text-base font-medium text-white rounded-md hover:bg-indigo-500 hover:bg-opacity-75"
+                @click.native="isOpen = false"
               >
                 Se connecter
               </router-link>
@@ -169,6 +170,7 @@ export default {
   },
   methods: {
     logout() {
+      this.isOpen = false;
       AuthService.logout();
       this.$store.commit("disableEditMode");
     },
