@@ -55,6 +55,6 @@ jobs:
             echo SPRING_DATASOURCE_USERNAME=$DATABASE_USERNAME >> .env
             echo SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD >> .env
             sudo docker-compose down
-            sudo docker-compose rm
+            sudo docker container prune -f
             docker image prune -af
             sudo docker-compose up -d
