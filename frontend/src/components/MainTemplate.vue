@@ -9,30 +9,13 @@
             class="relative flex items-center justify-between h-16 lg:border-b lg:border-indigo-400 lg:border-opacity-25"
           >
             <div class="flex items-center px-2 lg:px-0">
-              <div class="flex-shrink-0">
+              <router-link to="/" class="flex-shrink-0">
                 <img
                   class="block w-8 h-8"
                   src="/logo.png"
                   alt="Logo poker du jeudi"
                 />
-              </div>
-              <span
-                class="px-1 ml-4 leading-5 text-white bg-red-500 rounded sm:hidden"
-                >all</span
-              ><span
-                class="hidden px-1 ml-4 leading-5 text-white bg-red-500 rounded sm:block md:hidden"
-                >sm</span
-              >
-              <span
-                class="hidden px-1 ml-4 leading-5 text-white bg-red-500 rounded md:block lg:hidden"
-                >md</span
-              ><span
-                class="hidden px-1 ml-4 leading-5 text-white bg-red-500 rounded lg:block xl:hidden"
-                >lg</span
-              ><span
-                class="hidden px-1 ml-4 leading-5 text-white bg-red-500 rounded xl:block"
-                >xl</span
-              >
+              </router-link>
               <div class="hidden lg:block lg:ml-10">
                 <div class="flex space-x-4">
                   <router-link
