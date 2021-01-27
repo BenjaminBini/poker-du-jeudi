@@ -42,12 +42,12 @@ jobs:
           envs: DATABASE_URL,DATABASE_USERNAME,DATABASE_PASSWORD,GITHUB_TOKEN,GITHUB_ACTOR,IMAGE_ID
           script: |
             echo "$GITHUB_TOKEN" | sudo docker login docker.pkg.github.com -u $GITHUB_ACTOR --password-stdin
-            sudo rm -rf /data${{ github.repository }}
-            sudo mkdir -p /data${{ github.repository }}
-            sudo chown deploy:deploy /data${{ github.repository }}
+            sudo rm -rf /data/poker-du-jeudi
+            sudo mkdir -p /data/poker-du-jeudi
+            sudo chown deploy:deploy /data/poker-du-jeudi
             cd /data
             git clone https://github.com/${{ github.repository }}.git
-            cd ${{ github.repository }}
+            cd poker-du-jeudi
             echo SPRING_DATASOURCE_URL=$DATABASE_URL >> .env
             echo SPRING_DATASOURCE_USERNAME=$DATABASE_USERNAME >> .env
             echo SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD >> .env
