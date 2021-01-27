@@ -2,6 +2,7 @@ version: '3.5'
 
 services:
   backend:
+    image: docker.pkg.github.com/benjaminbini/poker-du-jeudi/poker-du-jeudi-back:latest
     build: ./backend
     ports:
       - "7777:8081"
@@ -13,6 +14,7 @@ services:
     restart: always
 
   frontend:
+    image: docker.pkg.github.com/benjaminbini/poker-du-jeudi/poker-du-jeudi-front:latest
     build: ./frontend
     ports:
       - "7778:80"
