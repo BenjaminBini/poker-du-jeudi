@@ -10,11 +10,16 @@
           >
             <div class="flex items-center px-2 lg:px-0">
               <router-link to="/" class="flex-shrink-0">
-                <img
-                  class="block w-8 h-8"
-                  src="/logo.png"
-                  alt="Logo poker du jeudi"
-                />
+                <div class="flex items-center">
+                  <img
+                    class="block w-8 h-8"
+                    src="/logo.png"
+                    alt="Logo poker du jeudi"
+                  />
+                  <span class="pl-3 font-bold text-white text-md"
+                    >Poker du jeudi
+                  </span>
+                </div>
               </router-link>
               <div class="hidden lg:block lg:ml-10">
                 <div class="flex space-x-4">
