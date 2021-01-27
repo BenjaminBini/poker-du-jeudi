@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  FRONT_IMAGE_ID: docker.pkg.github.com/${{ github.repository }}/poker-du-jeudi-front:latest
-  BACK_IMAGE_ID: docker.pkg.github.com/${{ github.repository }}/poker-du-jeudi-back:latest
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker-compose build
+        run: |
+          echo SPRING_DATASOURCE_URL=$DATABASE_URL >> .env
+          echo SPRING_DATASOURCE_USERNAME=$DATABASE_USERNAME >> .env
+          echo SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD >> .env
+          docker-compose build
       - name: Push the image
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
