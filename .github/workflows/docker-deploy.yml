@@ -17,6 +17,8 @@ jobs:
           echo SPRING_DATASOURCE_URL=$DATABASE_URL >> .env
           echo SPRING_DATASOURCE_USERNAME=$DATABASE_USERNAME >> .env
           echo SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD >> .env
+          echo VUE_APP_API_BASE=$VUE_APP_API_BASE >> frontend/.env.local
+          echo VUE_API_LOGIN_BASE=$VUE_API_LOGIN_BASE >> frontend/.env.local
           docker-compose build
       - name: Push the image
         run: |
