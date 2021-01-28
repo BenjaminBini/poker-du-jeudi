@@ -12,7 +12,7 @@
         clip-rule="evenodd"
       ></path>
     </svg>
-    <span class="truncate">{{ sessionCount }} sessions</span>
+    <span class="truncate">{{ sessionCount }} participations</span>
   </div>
 </template>
 
