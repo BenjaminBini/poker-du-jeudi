@@ -8,7 +8,7 @@
     </div>
     <div
       v-if="!loading"
-      class="col-span-1 overflow-hidden bg-white shadow rounded-md"
+      class="col-span-1 overflow-hidden bg-white rounded-md shadow"
     >
       <router-link
         class="block transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
@@ -77,9 +77,7 @@ import { StarIcon } from "@vue-hero-icons/solid";
 export default {
   components: { ArrowCircleDownIcon, HomeIcon, StarIcon, UserGroupIcon },
   props: ["session", "loading"],
-  data: () => ({
-    formattedDate: String,
-  }),
+  data: () => ({}),
   computed: {
     winner: function () {
       if (!this.session) return;
@@ -88,21 +86,18 @@ export default {
       )[0];
     },
     loser: function () {
-      if (!this.session) return;
       return [...this.session.playerResults].sort(
         (pr1, pr2) => pr1.result - pr2.result
       )[0];
     },
+    formattedDate: function () {
+      if (!this.session) return;
+      return format(new Date(this.session.date), "EEEE d MMMM yyyy", {
+        locale: fr,
+      });
+    },
   },
-  mounted() {
-    if (this.session) {
-      this.formattedDate = format(
-        new Date(this.session.date),
-        "EEEE d MMMM yyyy",
-        { locale: fr }
-      );
-    }
-  },
+  mounted() {},
 };
 </script>
 
