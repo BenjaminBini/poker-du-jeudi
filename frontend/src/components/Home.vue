@@ -2,7 +2,31 @@
   <div
     class="grid w-full grid-cols-1 space-y-6 lg:grid-cols-3 xl:grid-cols-4 lg:space-y-0 lg:space-x-6"
   >
-    <div class="xl:col-span-2">
+    <div class="space-y-4 xl:col-span-2">
+      <div
+        class="grid grid-cols-1 space-x-0 space-y-4 sm:space-y-0 sm:space-x-4 sm:grid-cols-2 xl:space-x-4 lg:grid-cols-1 lg:space-y-4 lg:space-x-0 xl:grid-cols-2 xl:space-y-0"
+      >
+        <stat-card
+          label="Vainqueur"
+          :loading="loading"
+          :stat="!loading ? results[0].player.firstName : ''"
+          :change="!loading ? results[0] : ''"
+          color-class="bg-green-500"
+        >
+          <StarIcon class="w-6 h-6 text-white"></StarIcon>
+        </stat-card>
+        <stat-card
+          label="Perdant"
+          :loading="loading"
+          :stat="!loading ? results[results.length - 1].player.firstName : ''"
+          :change="!loading ? results[results.length - 1] : ''"
+          color-class="bg-red-500"
+        >
+          <ChevronDoubleDownIcon
+            class="w-6 h-6 text-white"
+          ></ChevronDoubleDownIcon>
+        </stat-card>
+      </div>
       <tailwind-card
         :title="`Dernière session ${session ? ' - ' + formattedDate : ''}`"
         :to="session ? `/sessions/${session.sessionId}` : ''"
@@ -38,8 +62,10 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import SessionResultChartContainer from "@/components/session/SessionResultChartContainer.vue";
 import SessionService from "@/services/session-service";
+import StatCard from "@/components/player/player-detail/StatCard";
 import RankingComponent from "@/components/ranking/RankingComponent";
 import TailwindCard from "@/components/ui/TailwindCard.vue";
+import { ChevronDoubleDownIcon, StarIcon } from "@vue-hero-icons/outline";
 
 export default {
   name: "Home",
@@ -47,6 +73,9 @@ export default {
     RankingComponent,
     SessionResultChartContainer,
     TailwindCard,
+    StatCard,
+    ChevronDoubleDownIcon,
+    StarIcon,
   },
   data: () => ({
     rankings: Array,
@@ -55,6 +84,12 @@ export default {
     loading: true,
   }),
   computed: {
+    results: function () {
+      if (this.loading) return [];
+      return [...this.session.playerResults].sort(
+        (r1, r2) => r2.result - r1.result
+      );
+    },
     formattedDate: function () {
       if (!this.session) return;
       const formattedDate = format(
