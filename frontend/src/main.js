@@ -8,6 +8,7 @@ import PlayerTotalResult from "./components/player/PlayerTotalResult";
 import ResultBadge from "./components/player/players-list/ResultBadge";
 import SessionCount from "./components/player/players-list/SessionCount";
 import TailwindSpinner from "@/components/ui/TailwindSpinner";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Vuex from "vuex";
@@ -68,6 +69,9 @@ new Vue({
   router: router,
   store: store,
   render: (h) => h(App),
+  components: {
+    ChartDataLabels,
+  },
 }).$mount("#app");
 
 Axios.interceptors.request.use(
