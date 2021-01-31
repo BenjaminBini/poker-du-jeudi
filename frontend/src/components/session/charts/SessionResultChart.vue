@@ -62,11 +62,11 @@ const updateChart = function (results, showBuyIns, renderFunction) {
           },
           anchor: (context) => {
             const value = context.dataset.data[context.dataIndex];
-            return value >= 10 ? "end" : "start";
+            return value > 10 ? "end" : "start";
           },
           align: (context) => {
             const value = context.dataset.data[context.dataIndex];
-            return value >= -10 ? "start" : "end";
+            return value < -10 ? "end" : "start";
           },
         },
       },
