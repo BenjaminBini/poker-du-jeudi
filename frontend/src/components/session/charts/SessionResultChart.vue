@@ -9,7 +9,7 @@ const color = function (context) {
   return playerResult >= 0 ? settings.green : settings.red;
 };
 
-const updateChart = function (results, renderFunction) {
+const updateChart = function (results, showBuyIns, renderFunction) {
   if (!results || results.length === 0) return;
   results.sort((r1, r2) => r2.result - r1.result);
   const labels = results.map((r) => r.player.firstName);
@@ -26,6 +26,7 @@ const updateChart = function (results, renderFunction) {
         datalabels: {
           display: false,
         },
+        hidden: !showBuyIns,
       },
       {
         label: "Résultats",
@@ -72,18 +73,18 @@ const updateChart = function (results, renderFunction) {
     ],
     labels,
   };
-  const stepSize =
-    Math.max(
-      Math.max(...resultsData, ...buyInsData),
-      -Math.min(...resultsData, ...buyInsData)
-    ) > 55
-      ? 20
-      : 10;
+  const maxValue = showBuyIns
+    ? Math.max(...resultsData, ...buyInsData)
+    : Math.max(...resultsData);
+  const minValue = showBuyIns
+    ? Math.min(...resultsData, ...buyInsData)
+    : Math.min(...resultsData);
+  const stepSize = Math.max(maxValue, -minValue) > 55 ? 20 : 10;
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     legend: {
-      display: true,
+      display: showBuyIns,
       position: "bottom",
     },
     scales: {
@@ -91,12 +92,8 @@ const updateChart = function (results, renderFunction) {
         {
           ticks: {
             beginAtZero: true,
-            max:
-              Math.floor((Math.max(...resultsData, ...buyInsData) + 20) / 20) *
-              20,
-            min:
-              Math.ceil((Math.min(...resultsData, ...buyInsData) - 20) / 20) *
-              20,
+            max: Math.floor((maxValue + 20) / 20) * 20,
+            min: Math.ceil((minValue - 20) / 20) * 20,
             stepSize,
           },
           stacked: false,
@@ -129,15 +126,21 @@ const updateChart = function (results, renderFunction) {
 export default {
   name: "SessionResultChart",
   extends: Bar,
-  props: ["results"],
+  props: {
+    results: Array,
+    showBuyIns: {
+      type: Boolean,
+      default: true,
+    },
+  },
   watch: {
     results: function () {
-      updateChart([...this.results], this.renderChart);
+      updateChart([...this.results], this.showBuyIns, this.renderChart);
     },
   },
   mounted: function () {
     if (Array.isArray(this.results))
-      updateChart([...this.results], this.renderChart);
+      updateChart([...this.results], this.showBuyIns, this.renderChart);
   },
 };
 </script>

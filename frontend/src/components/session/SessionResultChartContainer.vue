@@ -7,6 +7,7 @@
       v-if="!loading"
       class="relative"
       :results="results"
+      :showBuyIns="showBuyIns"
       style="height: 404px"
     ></session-result-chart>
   </div>
@@ -17,6 +18,6 @@ import SessionResultChart from "./charts/SessionResultChart.vue";
 export default {
   name: "SessionResultChartContainer",
   components: { SessionResultChart },
-  props: ["results", "loading"],
+  props: ["results", "loading", "showBuyIns"],
 };
 </script>

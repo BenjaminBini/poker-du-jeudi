@@ -3,6 +3,16 @@
     class="grid w-full grid-cols-1 space-y-6 lg:grid-cols-3 xl:grid-cols-4 lg:space-y-0 lg:space-x-6"
   >
     <div class="space-y-4 xl:col-span-2">
+      <tailwind-card
+        :title="`Dernière session ${session ? ' - ' + formattedDate : ''}`"
+        :to="session ? `/sessions/${session.sessionId}` : ''"
+      >
+        <session-result-chart-container
+          :loading="loading"
+          :results="session ? session.playerResults : []"
+          :show-buy-ins="false"
+        ></session-result-chart-container>
+      </tailwind-card>
       <div
         class="grid grid-cols-1 space-x-0 space-y-4 sm:space-y-0 sm:space-x-4 sm:grid-cols-2 xl:space-x-4 lg:grid-cols-1 lg:space-y-4 lg:space-x-0 xl:grid-cols-2 xl:space-y-0"
       >
@@ -27,15 +37,6 @@
           ></ChevronDoubleDownIcon>
         </stat-card>
       </div>
-      <tailwind-card
-        :title="`Dernière session ${session ? ' - ' + formattedDate : ''}`"
-        :to="session ? `/sessions/${session.sessionId}` : ''"
-      >
-        <session-result-chart-container
-          :loading="loading"
-          :results="session ? session.playerResults : []"
-        ></session-result-chart-container>
-      </tailwind-card>
     </div>
     <div>
       <h2 class="pb-0 text-xl font-medium tracking-wide text-white"></h2>
