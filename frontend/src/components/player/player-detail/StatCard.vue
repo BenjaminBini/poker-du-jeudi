@@ -1,5 +1,9 @@
 <template>
-  <div class="overflow-hidden bg-white rounded-lg shadow">
+  <div
+    :is="!loading && to ? 'router-link' : 'div'"
+    :to="to"
+    class="overflow-hidden bg-white rounded-lg shadow"
+  >
     <div class="px-4 py-5 sm:p-6">
       <div v-if="loading" class="flex justify-center py-4">
         <tw-spinner></tw-spinner>
@@ -34,6 +38,14 @@
 <script>
 export default {
   name: "StatCard",
-  props: ["label", "stat", "change", "colorClass", "loading", "neutralBadge"],
+  props: [
+    "label",
+    "stat",
+    "change",
+    "colorClass",
+    "loading",
+    "neutralBadge",
+    "to",
+  ],
 };
 </script>

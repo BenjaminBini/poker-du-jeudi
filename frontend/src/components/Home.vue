@@ -16,26 +16,8 @@
       <div
         class="grid grid-cols-1 space-x-0 space-y-4 sm:space-y-0 sm:space-x-4 sm:grid-cols-2 xl:space-x-4 lg:grid-cols-1 lg:space-y-4 lg:space-x-0 xl:grid-cols-2 xl:space-y-0"
       >
-        <stat-card
-          label="Vainqueur"
-          :loading="loading"
-          :stat="!loading ? results[0].player.firstName : ''"
-          :change="!loading ? results[0] : ''"
-          color-class="bg-green-500"
-        >
-          <StarIcon class="w-6 h-6 text-white"></StarIcon>
-        </stat-card>
-        <stat-card
-          label="Perdant"
-          :loading="loading"
-          :stat="!loading ? results[results.length - 1].player.firstName : ''"
-          :change="!loading ? results[results.length - 1] : ''"
-          color-class="bg-red-500"
-        >
-          <ChevronDoubleDownIcon
-            class="w-6 h-6 text-white"
-          ></ChevronDoubleDownIcon>
-        </stat-card>
+        <session-winner :results="results"></session-winner>
+        <session-loser :results="results"></session-loser>
       </div>
     </div>
     <div>
@@ -63,10 +45,10 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import SessionResultChartContainer from "@/components/session/SessionResultChartContainer.vue";
 import SessionService from "@/services/session-service";
-import StatCard from "@/components/player/player-detail/StatCard";
 import RankingComponent from "@/components/ranking/RankingComponent";
 import TailwindCard from "@/components/ui/TailwindCard.vue";
-import { ChevronDoubleDownIcon, StarIcon } from "@vue-hero-icons/outline";
+import SessionWinner from "@/components/stat-cards/SessionWinner.vue";
+import SessionLoser from "@/components/stat-cards/SessionLoser.vue";
 
 export default {
   name: "Home",
@@ -74,9 +56,8 @@ export default {
     RankingComponent,
     SessionResultChartContainer,
     TailwindCard,
-    StatCard,
-    ChevronDoubleDownIcon,
-    StarIcon,
+    SessionWinner,
+    SessionLoser,
   },
   data: () => ({
     rankings: Array,

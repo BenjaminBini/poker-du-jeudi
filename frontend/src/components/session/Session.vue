@@ -1,47 +1,10 @@
 <template>
   <div>
     <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      <stat-card
-        label="Vainqueur"
-        :loading="loading"
-        :stat="!loading ? results[0].player.firstName : ''"
-        :change="!loading ? results[0] : ''"
-        color-class="bg-green-500"
-      >
-        <StarIcon class="w-6 h-6 text-white"></StarIcon>
-      </stat-card>
-      <stat-card
-        label="Perdant"
-        :loading="loading"
-        :stat="!loading ? results[results.length - 1].player.firstName : ''"
-        :change="!loading ? results[results.length - 1] : ''"
-        color-class="bg-red-500"
-      >
-        <ChevronDoubleDownIcon
-          class="w-6 h-6 text-white"
-        ></ChevronDoubleDownIcon>
-      </stat-card>
-      <stat-card
-        label="Lieu"
-        :loading="loading"
-        :stat="!loading ? session.place.name : ''"
-        color-class="bg-green-500"
-      >
-        <HomeIcon class="w-6 h-6 text-white"></HomeIcon>
-      </stat-card>
-      <stat-card
-        label="Argent misé"
-        v-if="loading || results[0].buyIns > 0"
-        :loading="loading"
-        :stat="
-          !loading
-            ? results.map((r) => r.buyIns).reduce((a, b) => a + b) * 10 + ' €'
-            : ''
-        "
-        color-class="bg-green-500"
-      >
-        <CashIcon class="w-6 h-6 text-white"></CashIcon>
-      </stat-card>
+      <session-winner :results="loading ? [] : results"></session-winner>
+      <session-loser :results="loading ? [] : results"></session-loser>
+      <session-place :session="loading ? {} : session"></session-place>
+      <session-amount :results="loading ? [] : results"></session-amount>
     </dl>
     <div class="grid grid-cols-12 gap-5 mt-14">
       <div
@@ -52,6 +15,7 @@
           <session-result-chart-container
             :loading="loading"
             :results="session.playerResults"
+            :show-buy-ins="false"
           ></session-result-chart-container>
         </tailwind-card>
       </div>
@@ -138,15 +102,7 @@ import SessionService from "../../services/session-service";
 import PlayerService from "../../services/player-service";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import StatCard from "@/components/player/player-detail/StatCard";
-import {
-  CashIcon,
-  ChevronDoubleDownIcon,
-  HomeIcon,
-  StarIcon,
-  PlusIcon,
-  XIcon,
-} from "@vue-hero-icons/outline";
+import { PlusIcon, XIcon } from "@vue-hero-icons/outline";
 import RankingComponent from "@/components/ranking/RankingComponent";
 import TailwindCard from "@/components/ui/TailwindCard.vue";
 import SessionResultChartContainer from "./SessionResultChartContainer.vue";
@@ -154,23 +110,26 @@ import SessionResultRanking from "@/components/session/SessionResultRanking.vue"
 import TailwindButton from "@/components/ui/TailwindButton";
 import AddPlayerPanel from "@/components/session/AddPlayerPanel";
 import settings from "@/settings";
+import SessionWinner from "@/components/stat-cards/SessionWinner.vue";
+import SessionLoser from "@/components/stat-cards/SessionLoser.vue";
+import SessionPlace from "@/components/stat-cards/SessionPlace.vue";
+import SessionAmount from "@/components/stat-cards/SessionAmount.vue";
 
 export default {
   name: "Session",
   components: {
     AddPlayerPanel,
-    CashIcon,
-    ChevronDoubleDownIcon,
-    HomeIcon,
     PlusIcon,
     RankingComponent,
-    StarIcon,
-    StatCard,
     TailwindCard,
     SessionResultChartContainer,
     SessionResultRanking,
     TailwindButton,
     XIcon,
+    SessionLoser,
+    SessionWinner,
+    SessionPlace,
+    SessionAmount,
   },
   data: () => ({
     session: Object,

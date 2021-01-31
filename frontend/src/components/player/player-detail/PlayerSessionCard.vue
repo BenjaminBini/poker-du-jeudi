@@ -25,14 +25,14 @@
             formatDate(result.session.date)
           }}</span>
           <div class="flex items-center text-gray-500">
-            <StarIcon
-              class="w-6 h-6 mr-1 text-yellow-400"
+            <star-icon
+              class="w-5 h-5 mr-1 text-yellow-400"
               v-if="result.rank === 1"
-            ></StarIcon>
-            <ArrowCircleDownIcon
+            ></star-icon>
+            <arrow-circle-down-icon
               class="w-5 h-5 mr-1 text-red-500"
               v-if="result.last"
-            ></ArrowCircleDownIcon
+            ></arrow-circle-down-icon
             >{{ result.last ? result.playersCount : result.rank }}e sur
             {{ result.playersCount }} joueurs
           </div>

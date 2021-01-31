@@ -1,107 +1,49 @@
 <template>
   <div>
     <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-      <StatCard
-        label="Résultat total"
-        :loading="playerLoading"
-        :stat="playerTotalResult + '€'"
-        :change="lastSessionResult"
-        :color-class="playerTotalResult >= 0 ? 'bg-green-500' : 'bg-red-500'"
-      >
-        <CashIcon class="w-6 h-6 text-white"></CashIcon>
-      </StatCard>
-      <StatCard
-        label="Résultat"
-        :loading="playerLoading"
-        :stat="currentSeasonResult + '€'"
-        :color-class="currentSeasonResult >= 0 ? 'bg-green-500' : 'bg-red-500'"
-        :neutral-badge="selectedYear"
-      >
-        <PresentationChartLineIcon
-          class="w-6 h-6 text-white"
-        ></PresentationChartLineIcon>
-      </StatCard>
-      <StatCard
-        label="Participations"
-        :loading="playerLoading"
-        :stat="filteredResults.length"
-        color-class="bg-green-500"
-        :neutralBadge="selectedYear"
-      >
-        <CalendarIcon class="w-6 h-6 text-white"></CalendarIcon>
-      </StatCard>
-      <StatCard
-        label="Premières places"
-        :loading="playerLoading"
-        :stat="`${firstPlaces} (${Math.ceil(
-          (firstPlaces / filteredResults.length) * 100
-        )}%)`"
-        color-class="bg-green-500"
-        :neutral-badge="selectedYear"
-      >
-        <AcademicCapIcon class="w-6 h-6 text-white"></AcademicCapIcon>
-      </StatCard>
+      <player-total-result
+        :results="playerLoading ? [] : player.playerResults"
+      ></player-total-result>
+      <player-season-result
+        :results="playerLoading ? [] : player.playerResults"
+        :year="selectedYear"
+        :last-year-played="yearsPlayed[0]"
+      ></player-season-result>
+      <player-participations
+        :results="filteredResults"
+        :year="selectedYear"
+      ></player-participations>
+      <player-first-places
+        :results="filteredResults"
+        :year="selectedYear"
+      ></player-first-places>
     </dl>
     <dl
       class="grid grid-cols-1 gap-5 mt-5 xl:mt-14 sm:grid-cols-2 xl:grid-cols-4"
     >
-      <StatCard
-        label="Meilleure session"
-        :loading="playerLoading"
-        :stat="bestResult.result + '€'"
-        color-class="bg-green-500"
-        :neutral-badge="bestResult.sessionDate"
-      >
-        <LightningBoltIcon class="w-6 h-6 text-white"></LightningBoltIcon>
-      </StatCard>
-      <StatCard
-        label="Pire session"
-        :loading="playerLoading"
-        :stat="worstResult.result + '€'"
-        color-class="bg-red-500"
-        :neutral-badge="worstResult.sessionDate"
-      >
-        <ShieldExclamationIcon
-          class="w-6 h-6 text-white"
-        ></ShieldExclamationIcon>
-      </StatCard>
-      <StatCard
-        label="Sessions positives"
-        :loading="playerLoading"
-        :stat="
-          this.player.playerResults
-            ? `${positiveSessions} (${Math.ceil(
-                (positiveSessions / filteredResults.length) * 100
-              )}%)`
-            : ''
-        "
-        :neutral-badge="selectedYear"
-        color-class="bg-green-500"
-      >
-        <TrendingUpIcon class="w-6 h-6 text-white"></TrendingUpIcon>
-      </StatCard>
-      <StatCard
-        label="Dernières places"
-        :loading="playerLoading"
-        :stat="`${lastPlaces} (${Math.ceil(
-          (lastPlaces / filteredResults.length) * 100
-        )}%)`"
-        color-class="bg-red-500"
-        :neutral-badge="selectedYear"
-      >
-        <ChevronDoubleDownIcon
-          class="w-6 h-6 text-white"
-        ></ChevronDoubleDownIcon>
-      </StatCard>
+      <player-best-session
+        :results="playerLoading ? [] : player.playerResults"
+      ></player-best-session>
+      <player-worst-session
+        :results="playerLoading ? [] : player.playerResults"
+      ></player-worst-session>
+      <player-positive-sessions
+        :results="filteredResults"
+        :year="selectedYear"
+      ></player-positive-sessions>
+      <player-last-places
+        :results="filteredResults"
+        :year="selectedYear"
+      ></player-last-places>
     </dl>
-    <ResultChartContainer
+    <result-chart-container
       class="mt-7"
       :loading="playerLoading"
       :results="player.playerResults"
       :selected-year="selectedYear"
       :years-played="yearsPlayed"
       @year-selected="yearSelected"
-    ></ResultChartContainer>
+    ></result-chart-container>
     <div class="lg:space-x-6 lg:flex">
       <div class="lg:w-1/2">
         <h2
@@ -111,17 +53,17 @@
         </h2>
         <div class="space-y-8 sm:flex sm:space-x-8 sm:space-y-0">
           <div class="sm:w-1/2">
-            <RankingComponent
+            <ranking-component
               :loading="generalRankingsLoading"
               :rankings="generalRankings"
               :previous-rankings="previousRankings"
               :active-player-id="player.playerId"
               :season-ranking="false"
               title="Classement général"
-            ></RankingComponent>
+            ></ranking-component>
           </div>
           <div class="sm:w-1/2">
-            <RankingComponent
+            <ranking-component
               :loading="seasonRankingsLoading"
               :rankings="rankings"
               :previous-rankings="previousRankings"
@@ -130,7 +72,7 @@
               :title="`Classement ${
                 selectedYear === 0 ? yearsPlayed[0] : selectedYear
               }`"
-            ></RankingComponent>
+            ></ranking-component>
           </div>
         </div>
       </div>
@@ -146,17 +88,41 @@
           class="grid grid-cols-1 gap-5 mt-6 sm:gap-6 sm:grid-cols-2"
           v-if="playerLoading"
         >
-          <PlayerSessionCard :loading="true"></PlayerSessionCard>
+          <player-session-card :loading="true"></player-session-card>
         </div>
         <div
           class="grid grid-cols-1 gap-5 mt-6 sm:gap-6 sm:grid-cols-2"
           v-if="!playerLoading"
         >
-          <PlayerSessionCard
-            v-for="result in filteredYears"
+          <player-session-card
+            v-for="result in showAll
+              ? sortedResults
+              : sortedResults.slice(0, 12)"
             :result="result"
             :key="result.session.sessionId"
-          ></PlayerSessionCard>
+          ></player-session-card>
+        </div>
+        <div
+          class="relative mt-6"
+          v-if="!playerLoading && filteredResults.length > 12"
+        >
+          <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center">
+            <button
+              type="button"
+              @click="showAll = !showAll"
+              class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <!-- Heroicon name: plus-sm -->
+              <plus-sm-icon
+                :is="showAll ? 'minus-sm-icon' : 'plus-sm-icon'"
+                class="-ml-1.5 mr-1 h-5 w-5 text-gray-400"
+              ></plus-sm-icon>
+              <span>{{ showAll ? "Voir moins" : "Voir tout" }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -164,40 +130,37 @@
 </template>
 
 <script>
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import PlayerService from "../../../services/player-service";
 import SessionService from "../../../services/session-service";
-import {
-  CalendarIcon,
-  CashIcon,
-  ChevronDoubleDownIcon,
-  LightningBoltIcon,
-  PresentationChartLineIcon,
-  ShieldExclamationIcon,
-  TrendingUpIcon,
-} from "@vue-hero-icons/outline";
-import { AcademicCapIcon } from "@vue-hero-icons/solid";
 import ResultChartContainer from "./ResultChartContainer";
-import StatCard from "./StatCard";
 import PlayerSessionCard from "./PlayerSessionCard";
 import RankingComponent from "../../ranking/RankingComponent";
+import PlayerTotalResult from "@/components/stat-cards/PlayerTotalResult.vue";
+import PlayerSeasonResult from "@/components/stat-cards/PlayerSeasonResult.vue";
+import PlayerParticipations from "@/components/stat-cards/PlayerParticipations.vue";
+import PlayerFirstPlaces from "@/components/stat-cards/PlayerFirstPlaces.vue";
+import PlayerBestSession from "@/components/stat-cards/PlayerBestSession.vue";
+import PlayerWorstSession from "@/components/stat-cards/PlayerWorstSession.vue";
+import PlayerPositiveSessions from "@/components/stat-cards/PlayerPositiveSessions.vue";
+import PlayerLastPlaces from "@/components/stat-cards/PlayerLastPlaces.vue";
+import { MinusSmIcon, PlusSmIcon } from "@vue-hero-icons/outline";
 
 export default {
   name: "Player",
   components: {
     RankingComponent,
     ResultChartContainer,
-    AcademicCapIcon,
-    CalendarIcon,
-    CashIcon,
-    ChevronDoubleDownIcon,
-    LightningBoltIcon,
     PlayerSessionCard,
-    PresentationChartLineIcon,
-    ShieldExclamationIcon,
-    StatCard,
-    TrendingUpIcon,
+    PlayerTotalResult,
+    PlayerSeasonResult,
+    PlayerParticipations,
+    PlayerFirstPlaces,
+    PlayerBestSession,
+    PlayerWorstSession,
+    PlayerPositiveSessions,
+    PlayerLastPlaces,
+    PlusSmIcon,
+    MinusSmIcon,
   },
   data: () => ({
     player: Object,
@@ -210,6 +173,7 @@ export default {
     previousRankings: Array,
     generalRankingsLoading: false,
     seasonRankingsLoading: false,
+    showAll: false,
   }),
   computed: {
     filteredResults: function () {
@@ -222,7 +186,7 @@ export default {
           this.selectedYear === 0
       );
     },
-    filteredYears: function () {
+    sortedResults: function () {
       if (!this.player.playerResults) return [];
       return [...this.player.playerResults]
         .filter(
@@ -233,73 +197,6 @@ export default {
         .sort(
           (r1, r2) => new Date(r2.session.date) - new Date(r1.session.date)
         );
-    },
-    playerTotalResult: function () {
-      if (this.player) {
-        return PlayerService.getPlayerTotalResult(this.player);
-      }
-      return 0;
-    },
-    currentSeasonResult: function () {
-      if (!this.player.playerResults) return [];
-      let currentYear = this.selectedYear;
-      if (currentYear === 0) {
-        currentYear = this.yearsPlayed[0];
-      }
-      return this.player.playerResults
-        .filter((r) => r.session.season.year === currentYear)
-        .map((r) => r.result)
-        .reduce((acc, curr) => acc + curr, 0);
-    },
-    lastSessionResult: function () {
-      if (this.player.playerResults && this.player.playerResults.length > 0) {
-        let results = [...this.player.playerResults];
-        return results.sort(
-          (r1, r2) => new Date(r2.session.date) - new Date(r1.session.date)
-        )[0];
-      }
-      return undefined;
-    },
-    firstPlaces: function () {
-      if (!this.player.playerResults) return 0;
-      return this.filteredResults.filter((pr) => pr.rank === 1).length;
-    },
-    lastPlaces: function () {
-      if (!this.player.playerResults) return 0;
-      return this.filteredResults.filter((pr) => pr.last).length;
-    },
-    positiveSessions: function () {
-      if (!this.player.playerResults) return 0;
-      return this.filteredResults.filter((pr) => pr.result >= 0).length;
-    },
-    bestResult: function () {
-      if (!this.player.playerResults) return 0;
-      let bestResult = this.player.playerResults.reduce((acc, cur) =>
-        cur.result > acc.result ? cur : acc
-      );
-
-      bestResult.sessionDate = format(
-        new Date(bestResult.session.date),
-        "dd/MM/yyyy",
-        {
-          locale: fr,
-        }
-      );
-      return bestResult;
-    },
-    worstResult: function () {
-      if (!this.player.playerResults) return 0;
-      let worstResult = this.player.playerResults.reduce((acc, cur) =>
-        cur.result < acc.result ? cur : acc
-      );
-      worstResult.sessionDate = format(
-        new Date(worstResult.session.date),
-        "dd/MM/yyyy",
-        {
-          locale: fr,
-        }
-      );
-      return worstResult;
     },
   },
   watch: {
@@ -343,7 +240,7 @@ export default {
       }
       this.seasonRankingsLoading = false;
     },
-    yearSelected(event, year) {
+    yearSelected(_, year) {
       this.selectedYear = year;
     },
   },

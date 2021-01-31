@@ -83,6 +83,7 @@ const updateChart = function (results, showBuyIns, renderFunction) {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    tooltips: false,
     legend: {
       display: showBuyIns,
       position: "bottom",

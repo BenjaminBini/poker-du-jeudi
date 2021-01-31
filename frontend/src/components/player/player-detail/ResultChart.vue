@@ -2,6 +2,7 @@
 import { Line } from "vue-chartjs";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+const colors = require("tailwindcss/colors");
 
 const color = function (context) {
   const index = context.dataIndex;
@@ -20,6 +21,7 @@ let options = {
   legend: {
     display: false,
   },
+  tooltips: false,
   scales: {
     yAxes: [
       {
@@ -38,6 +40,8 @@ const updateChart = function (results, renderFunction) {
     .map((pr) => pr.result);
   let sum;
   const cumulatedResult = resultsData.map((r) => (sum = (sum || 0) + r));
+  const lowestCumulatedResult = Math.min(...cumulatedResult);
+  const highestCumulatedResult = Math.max(...cumulatedResult);
   let resultLabels;
   if (cumulatedResult.length < 50) {
     resultLabels = results.map((pr) =>
@@ -66,8 +70,41 @@ const updateChart = function (results, renderFunction) {
         borderColor: "rgb(79, 70, 229)",
         pointStyle: "circle",
         radius: 3,
+        pointHitRadius: 8,
         pointBorderColor: color,
         pointBackgroundColor: color,
+        datalabels: {
+          backgroundColor: colors.white,
+          borderColor: color,
+          borderWidth: 1,
+          borderRadius: 4,
+          display: (context) => {
+            if (context.active) return "true";
+            const value = context.dataset.data[context.dataIndex];
+            return (
+              value == lowestCumulatedResult || value == highestCumulatedResult
+            );
+          },
+          font: {
+            lineHeight: 0.8,
+          },
+          formatter: function (value) {
+            return `${value} €`;
+          },
+          align: (context) => {
+            if (context.dataIndex == 0) return "right";
+            if (context.dataIndex == context.dataset.data.length - 1)
+              return "left";
+            const value = context.dataset.data[context.dataIndex];
+            return value >= highestCumulatedResult - 10 ? "start" : "end";
+          },
+          clip: false,
+          clamp: true,
+          offset: 8,
+          padding: {
+            bottom: 2,
+          },
+        },
       },
     ],
     labels: resultLabels,
