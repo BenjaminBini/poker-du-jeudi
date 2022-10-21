@@ -106,7 +106,7 @@
                     ></span>
                     <div
                       v-if="row.evolution != 0"
-                      class="inline-flex items-center rounded-md py-0.5 ml-1"
+                      class="inline-flex items-center rounded-md ml-1"
                       :class="
                         row.evolution > 0 ? 'text-green-500 ' : 'text-red-500'
                       "
