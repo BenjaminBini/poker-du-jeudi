@@ -70,6 +70,15 @@
               ? session.rankings.filter((r) => !r.rankingKey.general)
               : []
           "
+          :previous-rankings="
+            !loading &&
+            session.previousSession &&
+            session.season.seasonId === session.previousSession.season.seasonId
+              ? session.previousSession.rankings.filter(
+                  (r) => !r.rankingKey.general
+                )
+              : []
+          "
           :active-player-ids="
             !loading
               ? session.playerResults.map((pr) => pr.player.playerId)

@@ -27,12 +27,30 @@
         :rankings="rankings"
         :season-ranking="true"
         :title="`Classement ${season}`"
+        :previous-rankings="
+          session &&
+          session.previousSession &&
+          session.season.seasonId === session.previousSession.season.seasonId
+            ? session.previousSession.rankings.filter(
+                (r) => !r.rankingKey.general
+              )
+            : []
+        "
       ></ranking-component>
     </div>
     <div>
       <ranking-component
         :loading="loading"
         :rankings="rankings"
+        :previous-rankings="
+          session &&
+          session.previousSession &&
+          session.season.seasonId === session.previousSession.season.seasonId
+            ? session.previousSession.rankings.filter(
+                (r) => r.rankingKey.general
+              )
+            : []
+        "
         :season-ranking="false"
         title="Classement général"
       ></ranking-component>
@@ -66,13 +84,13 @@ export default {
     loading: true,
   }),
   computed: {
-    results: function () {
+    results: function() {
       if (this.loading) return [];
       return [...this.session.playerResults].sort(
         (r1, r2) => r2.result - r1.result
       );
     },
-    formattedDate: function () {
+    formattedDate: function() {
       if (!this.session) return;
       const formattedDate = format(
         new Date(this.session.date),
@@ -84,7 +102,7 @@ export default {
       return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     },
   },
-  mounted: async function () {
+  mounted: async function() {
     const response = await SessionService.getLatestSession();
     this.session = response.data;
     this.season = response.data.season.name;

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col overflow-hidden divide-y divide-gray-200 shadow rounded-lg"
+    class="flex flex-col overflow-hidden divide-y divide-gray-200 rounded-lg shadow"
   >
     <div
       class="p-2 pl-3 font-bold tracking-wide text-center text-indigo-600 bg-white text-l"
@@ -24,7 +24,7 @@
                     : 'bg-white text-indigo-500'
                 "
               >
-                <UsersIcon class="w-5 h-5 mr-2"></UsersIcon
+                <users-icon class="w-5 h-5 mr-2"></users-icon
                 ><span>Habitués</span>
               </button>
               <button
@@ -36,7 +36,7 @@
                     : 'bg-white text-indigo-500'
                 "
               >
-                <UserGroupIcon class="w-5 h-5 mr-2"></UserGroupIcon
+                <user-group-icon class="w-5 h-5 mr-2"></user-group-icon
                 ><span>Tous</span>
               </button>
             </div>
@@ -87,10 +87,10 @@
                 }"
               >
                 <td
-                  class="px-3 py-2 text-sm font-medium whitespace-nowrap"
+                  class="px-3 py-2 text-sm font-medium whitespace-nowrap items-center"
                   :class="row.isActive ? 'text-white' : 'text-gray-900'"
                 >
-                  {{ row.rank }}
+                  <div>{{ row.rank }}</div>
                 </td>
                 <td
                   class="px-0 py-3 text-sm font-medium text-indigo-600 whitespace-nowrap"
@@ -104,6 +104,33 @@
                       class="inline-block w-2 h-2 ml-2 bg-green-600 rounded-lg"
                       v-if="row.isPresent"
                     ></span>
+                    <div
+                      v-if="row.evolution != 0"
+                      class="inline-flex items-center rounded-md py-0.5 ml-1"
+                      :class="
+                        row.evolution > 0 ? 'text-green-500 ' : 'text-red-500'
+                      "
+                    >
+                      <ChevronUpIcon
+                        class="w-5 h-5"
+                        v-if="row.evolution > 0"
+                      ></ChevronUpIcon>
+
+                      <ChevronDownIcon
+                        class="w-5 h-5"
+                        v-if="row.evolution < 0"
+                      ></ChevronDownIcon>
+                      <ChevronRightIcon
+                        class="w-5 h-5"
+                        v-if="row.evolution == 0"
+                      ></ChevronRightIcon>
+                      <div v-if="row.evolution > 0" class="mr-1">
+                        {{ row.evolution }}
+                      </div>
+                      <div v-if="row.evolution < 0" class="mr-1">
+                        {{ -row.evolution }}
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td
@@ -141,7 +168,13 @@
 </template>
 
 <script>
-import { UserGroupIcon, UsersIcon } from "@vue-hero-icons/solid";
+import {
+  UserGroupIcon,
+  UsersIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "@vue-hero-icons/solid";
 import settings from "@/settings";
 
 export default {
@@ -158,17 +191,20 @@ export default {
   components: {
     UserGroupIcon,
     UsersIcon,
+    ChevronUpIcon,
+    ChevronDownIcon,
+    ChevronRightIcon,
   },
   data: () => ({
     forceShowReg: undefined,
   }),
   watch: {
-    $route: function () {
+    $route: function() {
       this.forceShowReg = undefined;
     },
   },
   computed: {
-    regsRanking: function () {
+    regsRanking: function() {
       if (!Array.isArray(this.rankings)) return [];
       if (this.seasonRanking) {
         return this.rankings.filter(
@@ -184,16 +220,38 @@ export default {
         );
       }
     },
-    allRanking: function () {
+    allRanking: function() {
       if (!Array.isArray(this.rankings)) return [];
       return this.rankings.filter(
         (r) => this.seasonRanking !== r.rankingKey.general
       );
     },
-    enoughDataToShowOnlyRegs: function () {
+    previousRegsRanking: function() {
+      if (!Array.isArray(this.previousRankings)) return [];
+      if (this.seasonRanking) {
+        return this.previousRankings.filter(
+          (r) =>
+            !r.rankingKey.general &&
+            r.sessionsCount >= settings.regPlayerMinimumSeasonSessionCount
+        );
+      } else {
+        return this.previousRankings.filter(
+          (r) =>
+            r.rankingKey.general &&
+            r.sessionsCount >= settings.regPlayerMinimumGeneralSessionCount
+        );
+      }
+    },
+    previousAllRanking: function() {
+      if (!Array.isArray(this.previousRankings)) return [];
+      return this.previousRankings.filter(
+        (r) => this.seasonRanking !== r.rankingKey.general
+      );
+    },
+    enoughDataToShowOnlyRegs: function() {
       return this.regsRanking.length > 0;
     },
-    showOnlyRegs: function () {
+    showOnlyRegs: function() {
       if (!this.enoughDataToShowOnlyRegs) return false;
       if (this.forceShowReg !== undefined) return this.forceShowReg;
       if (!Array.isArray(this.rankings)) return true;
@@ -207,21 +265,38 @@ export default {
         activePlayerRanking.sessionsCount >= this.sessionsCountToBeReg
       );
     },
-    sessionsCountToBeReg: function () {
+    sessionsCountToBeReg: function() {
       return this.seasonRanking
         ? settings.regPlayerMinimumSeasonSessionCount
         : settings.regPlayerMinimumGeneralSessionCount;
     },
-    table: function () {
+    table: function() {
       if (!Array.isArray(this.rankings)) return [];
       const rankings = this.showOnlyRegs
         ? [...this.regsRanking]
         : [...this.allRanking];
+      let previousRankings = this.showOnlyRegs
+        ? [...this.previousRegsRanking]
+        : [...this.previousAllRanking];
+      previousRankings.sort((r1, r2) => r2.total - r1.total);
+      previousRankings = previousRankings.map((r, i) => {
+        return {
+          rank: i > 0 && previousRankings[i - 1].total === r.total ? i : i + 1,
+          playerId: r.player.playerId,
+        };
+      });
       rankings.sort((r1, r2) => r2.total - r1.total);
       return rankings.map((r, i) => {
+        let rank = i > 0 && rankings[i - 1].total === r.total ? i : i + 1;
+        const previousRanking = previousRankings.filter(
+          (pr) => pr.playerId === r.player.playerId
+        );
+        const evolution =
+          previousRanking.length === 1 ? previousRanking[0].rank - rank : 0;
         return {
           total: r.total,
-          rank: i + 1,
+          rank,
+          evolution,
           playerId: r.player.playerId,
           playerName: r.player.firstName,
           sessionsCount: r.sessionsCount,
@@ -236,5 +311,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
