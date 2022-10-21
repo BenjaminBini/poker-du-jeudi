@@ -216,7 +216,6 @@ export default {
         this.player.playerResults.map((pr) => pr.session.season.year)
       );
       this.yearsPlayed = [...setOfYears].sort((y1, y2) => y2 - y1);
-      this.selectedYear = [...this.yearsPlayed][0];
       this.playerLoading = false;
       this.fetchGeneralRanking();
       this.fetchSeasonRanking();
