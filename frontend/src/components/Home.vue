@@ -22,20 +22,20 @@
     </div>
     <div>
       <h2 class="pb-0 text-xl font-medium tracking-wide text-white"></h2>
-      <RankingComponent
+      <ranking-component
         :loading="loading"
         :rankings="rankings"
         :season-ranking="true"
-        :title="session ? 'Classement' : `Classement ${season}`"
-      ></RankingComponent>
+        :title="`Classement ${season}`"
+      ></ranking-component>
     </div>
     <div>
-      <RankingComponent
+      <ranking-component
         :loading="loading"
         :rankings="rankings"
         :season-ranking="false"
         title="Classement général"
-      ></RankingComponent>
+      ></ranking-component>
     </div>
   </div>
 </template>
