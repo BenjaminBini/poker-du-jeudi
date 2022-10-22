@@ -1,9 +1,10 @@
-import AddSession from "@/components/session/AddSession";
 import Home from "@/components/Home";
+import AddSession from "@/components/session/AddSession";
+import Session from "@/components/session/Session";
+
 import Login from "../components/Login";
 import Player from "../components/player/player-detail/Player";
 import Players from "../components/player/players-list/Players";
-import Session from "@/components/session/Session";
 import Sessions from "../components/Sessions";
 
 const routes = [

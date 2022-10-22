@@ -1,20 +1,21 @@
 import "./main.css";
 
-import App from "./App.vue";
-import PlayerLastSession from "./components/player/PlayerLastSession";
-import PlayerListItem from "./components/player/players-list/PlayerListItem";
-import PlayerPicture from "./components/player/PlayerPicture";
-import PlayerTotalResult from "./components/player/PlayerTotalResult";
-import ResultBadge from "./components/player/players-list/ResultBadge";
-import SessionCount from "./components/player/players-list/SessionCount";
 import TailwindSpinner from "@/components/ui/TailwindSpinner";
+import { Axios } from "@/services/axios-service";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Vuex from "vuex";
-import routes from "./router/routes";
+
+import App from "./App.vue";
+import PlayerLastSession from "./components/player/PlayerLastSession";
+import PlayerPicture from "./components/player/PlayerPicture";
+import PlayerListItem from "./components/player/players-list/PlayerListItem";
+import ResultBadge from "./components/player/players-list/ResultBadge";
+import SessionCount from "./components/player/players-list/SessionCount";
+import PlayerTotalResult from "./components/player/PlayerTotalResult";
 import TailwindModal from "./components/ui/TailwindModal.vue";
-import { Axios } from "@/services/axios-service";
+import routes from "./router/routes";
 
 Vue.config.productionTip = false;
 Vue.use(Vuex);
@@ -60,6 +61,8 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.pageTitle) {
     store.commit("setPageTitle", to.meta.pageTitle);
+  } else {
+    store.commit("setPageTitle", "Chargement...");
   }
   store.commit("setPageActions", []);
   next();
