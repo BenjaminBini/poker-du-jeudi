@@ -104,40 +104,23 @@
                       class="inline-block w-2 h-2 ml-2 bg-green-600 rounded-lg"
                       v-if="row.isPresent"
                     ></span>
-                    <div
-                      v-if="row.evolution != 0"
-                      class="inline-flex items-center rounded-md ml-1"
-                      :class="
-                        row.evolution > 0 ? 'text-green-500 ' : 'text-red-500'
-                      "
-                    >
-                      <ChevronUpIcon
-                        class="w-5 h-5"
-                        v-if="row.evolution > 0"
-                      ></ChevronUpIcon>
-
-                      <ChevronDownIcon
-                        class="w-5 h-5"
-                        v-if="row.evolution < 0"
-                      ></ChevronDownIcon>
-                      <ChevronRightIcon
-                        class="w-5 h-5"
-                        v-if="row.evolution == 0"
-                      ></ChevronRightIcon>
-                      <div v-if="row.evolution > 0" class="mr-1">
-                        {{ row.evolution }}
-                      </div>
-                      <div v-if="row.evolution < 0" class="mr-1">
-                        {{ -row.evolution }}
-                      </div>
-                    </div>
+                    <EvolutionIndicator
+                      :evolution="row.evolution"
+                      :isActive="false"
+                    ></EvolutionIndicator>
                   </div>
                 </td>
                 <td
                   class="px-0 py-3 text-sm font-medium text-white whitespace-nowrap"
                   v-if="row.isActive"
                 >
-                  {{ row.playerName }}
+                  <div class="inline-flex items-center">
+                    {{ row.playerName }}
+                    <EvolutionIndicator
+                      :evolution="row.evolution"
+                      :isActive="true"
+                    ></EvolutionIndicator>
+                  </div>
                 </td>
                 <td
                   class="px-0 py-3 text-sm font-medium text-right whitespace-nowrap"
@@ -168,13 +151,8 @@
 </template>
 
 <script>
-import {
-  UserGroupIcon,
-  UsersIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-} from "@vue-hero-icons/solid";
+import { UserGroupIcon, UsersIcon } from "@vue-hero-icons/solid";
+import EvolutionIndicator from "./EvolutionIndicator.vue";
 import settings from "@/settings";
 
 export default {
@@ -191,9 +169,7 @@ export default {
   components: {
     UserGroupIcon,
     UsersIcon,
-    ChevronUpIcon,
-    ChevronDownIcon,
-    ChevronRightIcon,
+    EvolutionIndicator,
   },
   data: () => ({
     forceShowReg: undefined,
